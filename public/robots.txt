@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://hoffman-s-reptiles.onrender.com/sitemap.xml
