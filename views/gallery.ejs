@@ -6,17 +6,99 @@
     <title>Gallery - Hoffman's Reptile Shop</title>
 
     <link rel="icon" type="image/png" href="/Images/Logo.png" />
-    <link rel="stylesheet" href="/CSS/home_page.styles.css" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
+    <style>
+        body {
+            background-color: #000; /* Black background */
+            color: #28a745; /* Green text */
+        }
+
+        /* Navbar */
+        .navbar {
+            background-color: #fff !important; /* White navbar */
+        }
+        .navbar .nav-link,
+        .navbar .navbar-brand span {
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+        .navbar .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Hero Section */
+        .hero {
+            width: 100%;
+            height: 60vh;
+            background: url('/Images/hero_image_gallery.png') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero h1, .hero p {
+            color: #28a745; /* Green text */
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+        }
+
+        /* Info Section */
+        .info-section {
+            padding: 40px 20px;
+            color: #28a745;
+        }
+
+        /* Image Grid (4 top, 4 bottom) */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
+        }
+        .image-grid img {
+            width: 100%;
+            max-width: 350px;
+            height: 250px; /* lock size */
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
+        }
+        .image-grid img:hover {
+            transform: scale(1.05);
+        }
+
+        /* Footer */
+        .footer {
+            background: #28a745; /* Green footer */
+            color: #000; /* Black text on footer */
+            padding: 20px 0;
+        }
+        .footer h4,
+        .footer p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .footer .social-icons a {
+            color: #000;
+            margin: 0 10px;
+            font-size: 1.2rem;
+        }
+        .footer .social-icons a:hover {
+            color: #fff;
+        }
+    </style>
 </head>
 <body>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-md fixed-top bg-white shadow-lg">
+    <nav class="navbar navbar-expand-md fixed-top shadow-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/home">
                 <img src="/Images/Logo.png" alt="Logo" height="40" class="me-2" />
-                <span class="text-success fw-bold">Hoffman's Reptile Shop</span>
+                <span>Hoffman's Reptile Shop</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
@@ -33,8 +115,16 @@
         </div>
     </nav>
 
+    <!-- Hero Image -->
+    <section class="hero">
+        <div>
+            <h1>Our Gallery</h1>
+            <p>Explore the beauty of our reptiles and animals</p>
+        </div>
+    </section>
+
     <!-- Gallery Header -->
-    <section class="info-section text-center" style="margin-top:100px;">
+    <section class="info-section text-center" style="margin-top:40px;">
         <h2>Gallery</h2>
         <p>A look at some of our reptiles and animals. Visit our shop for the full collection.</p>
     </section>
@@ -42,14 +132,14 @@
     <!-- Image Grid -->
     <section class="image-grid-section">
         <div class="image-grid">
-            <img src="/Images/1.png" alt="Animal 1" />
-            <img src="/Images/2.png" alt="Animal 2" />
-            <img src="/Images/3.png" alt="Animal 3" />
-            <img src="/Images/4.png" alt="Animal 4" />
-            <img src="/Images/5.png" alt="Animal 5" />
-            <img src="/Images/6.png" alt="Animal 6" />
-            <img src="/Images/7.png" alt="Animal 7" />
-            <img src="/Images/8.png" alt="Animal 8" />
+            <img src="/images/1.png" alt="Animal 1" />
+            <img src="/images/2.png" alt="Animal 2" />
+            <img src="/images/3.png" alt="Animal 3" />
+            <img src="/images/4.png" alt="Animal 4" />
+            <img src="/images/5.png" alt="Animal 5" />
+            <img src="/images/6.png" alt="Animal 6" />
+            <img src="/images/7.png" alt="Animal 7" />
+            <img src="/images/8.png" alt="Animal 8" />
         </div>
     </section>
 
