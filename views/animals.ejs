@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Animals - Hoffman's Reptile Shop</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- Shared stylesheet -->
+  <link rel="stylesheet" href="/CSS/home_page.styles.css" />
+
+  <style>
+    :root {
+      --green:#0a4e07;
+      --bg:#000;
+      --card:#111;
+    }
+    * { box-sizing:border-box; }
+
+    body {
+      margin:0;
+      color:var(--green);
+      background:var(--bg);
+      font-family: Arial, Helvetica, sans-serif;
+      padding-top: 76px;
+    }
+
+    /* Navbar */
+    .navbar {
+      background-color:#fff !important;
+      box-shadow:0 4px 8px rgba(0,0,0,0.6);
+    }
+    .navbar .navbar-brand span { color:#1a9c48 !important; }
+    .navbar .nav-link {
+      color:#000 !important;
+      font-weight:600;
+      letter-spacing:.02em;
+      transition: color .3s ease;
+    }
+    .navbar .nav-link:hover,
+    .navbar .nav-link:focus { color:var(--green) !important; }
+    .navbar .nav-link.active {
+      color:#000 !important;
+      font-weight:700;
+    }
+    .navbar .nav-link.active:hover { color:var(--green) !important; }
+
+    /* Hero image */
+    .hero {
+      width: 100%;
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+    .hero img {
+      width: 100%;
+      height: 1000px ;
+      display: block;
+    }
+
+    .page-title { font-size:2rem; margin:0 0 18px 0; color:var(--green); }
+
+    .category {
+      margin:28px 0 10px 0;
+      font-size:1.5rem;
+      font-weight:700;
+    }
+
+    /* Transparent faded box for section content */
+    .content-box {
+      background: rgba(0,0,0,0.6);
+      padding: 20px;
+      margin-top: 15px;
+      border-radius: 8px;
+    }
+
+    /* Welcome Box */
+    .welcome-box {
+      background: rgba(150, 149, 149, 0.1);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      max-width: 900px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .welcome-box h2 { color: var(--green); margin-bottom: 10px; }
+    .welcome-box p { color:#fff; }
+
+    /* Animal list layout with CSS Grid */
+    .animal-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+      margin-top: 15px;
+    }
+
+    .animal-box {
+      display:flex;
+      flex-direction: column;
+      align-items:center;
+      background:rgba(0,0,0,0.7);
+      color:var(--green);
+      padding:10px;
+      border:none;
+      border-radius:6px;
+      text-decoration:none;
+      transition: background .2s ease;
+    }
+    .animal-box:hover { background:rgba(0,0,0,0.9); }
+
+    .animal-box img {
+      width: 100%;
+      height: 300px;
+      object-fit:cover;
+      border-radius:4px;
+    }
+
+    .animal-name {
+      font-size:1.2rem;
+      font-weight:700;
+      margin-top: 8px;
+      color:var(--green);
+    }
+
+    /* Footer */
+    footer {
+      margin-top:48px;
+      padding:30px 16px;
+      text-align:center;
+      background:var(--green);
+      color:#000;
+    }
+    footer h2 { margin:0 0 8px 0; color:#fff; font-size:1.8rem; font-weight:700; }
+    footer p { margin:6px 0; font-size:1rem; color:#fff; }
+    footer .copy { margin-top:14px; color:#222; font-size:.95rem; }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Navbar -->
+  <nav class="navbar navbar-expand-md fixed-top shadow-lg navbar-light">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="/home">
+        <img src="/Images/Logo.png" alt="Logo" height="40" class="me-2" />
+        <span class="fw-bold">Hoffman's Reptile Shop</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
+          <li class="nav-item"><a class="nav-link active" href="/animals">ANIMALS</a></li>
+          <li class="nav-item"><a class="nav-link" href="/gallery">GALLERY</a></li>
+          <li class="nav-item"><a class="nav-link" href="/about">ABOUT US</a></li>
+          <li class="nav-item"><a class="nav-link" href="/contact">CONTACT</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Image -->
+  <div class="hero">
+    <img src="/Images/hero_animal_page.png" alt="Hero Animal Page" />
+  </div>
+
+  <!-- Content -->
+  <div class="container">
+    <div class="content-box">
+      <!-- Welcome Box -->
+      <div class="welcome-box">
+        <h2>Welcome to Hoffman's Reptiles</h2>
+        <p>
+          At Hoffman's Reptiles, we pride ourselves on providing a wide variety of healthy and fascinating animals. 
+          From colorful lizards to powerful snakes, gentle turtles, and exotic species rarely found in stores, 
+          our goal is to connect reptile enthusiasts with the perfect companion. 
+          Every animal we offer is carefully cared for and comes with expert guidance 
+          to help you succeed in your reptile journey.
+        </p>
+      </div>
+
+      <!-- Animal List -->
+      <div class="animal-list">
+        <a href="/lizards" class="animal-box">
+          <img src="/Images/lizards.png" alt="Lizards" />
+          <span class="animal-name">Lizards</span>
+        </a>
+        <a href="/snakes" class="animal-box">
+          <img src="/Images/snakes.png" alt="Snakes" />
+          <span class="animal-name">Snakes</span>
+        </a>
+        <a href="/turtles" class="animal-box">
+          <img src="/Images/turtles.png" alt="Turtles" />
+          <span class="animal-name">Turtles</span>
+        </a>
+        <a href="/tortoises" class="animal-box">
+          <img src="/Images/turtles.png" alt="Tortoises" />
+          <span class="animal-name">Tortoises</span>
+        </a>
+        <a href="/frogs" class="animal-box">
+          <img src="/Images/frogs.png" alt="Frogs" />
+          <span class="animal-name">Frogs</span>
+        </a>
+        <a href="/rats" class="animal-box">
+          <img src="/Images/rats.png" alt="Rats" />
+          <span class="animal-name">Rats</span>
+        </a>
+        <a href="/tarantulas" class="animal-box">
+          <img src="/Images/tarantulas.png" alt="Tarantulas" />
+          <span class="animal-name">Tarantulas</span>
+        </a>
+        <a href="/newts" class="animal-box">
+          <img src="/Images/turtles.png" alt="Newts" />
+          <span class="animal-name">Newts</span>
+        </a>
+        <a href="/salamanders" class="animal-box">
+          <img src="/Images/turtles.png" alt="Salamanders" />
+          <span class="animal-name">Salamanders</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <h2>Hoffman's Reptile Shop</h2>
+    <p>2359 Concord Blvd, Concord, CA 94520</p>
+    <p>Phone: (925) 671-9106</p>
+    <p>Hours: Mon–Fri 12 PM – 6:30 PM | Sat 10 AM – 5 PM | Sun Closed</p>
+    <div class="copy">© <%= new Date().getFullYear() %> Hoffmann's Reptiles</div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

@@ -1,41 +1,62 @@
+/* ================================
+   Global Styles
+   ================================ */
 body {
-  background-color: #28a745 !important;
-  color: white;
+  background-color: #000 !important; /* Black background */
+  color: #1DB954; /* Green text */
   margin: 0;
   padding: 0;
+  font-family: Arial, sans-serif;
 }
 
-h1, p {
-  color: white;
+h1, h2, p {
+  color: #1DB954; /* Green text */
 }
 
+/* ================================
+   Navbar
+   ================================ */
 .navbar {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.6);
+  background-color: #fff !important; /* White background */
 }
 
 .navbar .nav-link {
-  color: black;
+  color: #000 !important; /* Black text by default */
+  font-weight: 600;
+  letter-spacing: .02em;
   transition: color 0.3s ease;
 }
 
-.navbar .nav-link:hover {
-  color: #28a745;
+.navbar .nav-link:hover,
+.navbar .nav-link:focus {
+  color: #1DB954 !important; /* Green on hover */
 }
 
-/* Carousel Full Screen */
+/* Active page: black normally, green on hover */
+.navbar .nav-link.active {
+  color: #000 !important;
+  font-weight: 700;
+}
+.navbar .nav-link.active:hover {
+  color: #1DB954 !important; /* Green on hover even if active */
+}
+
+/* ================================
+   Carousel
+   ================================ */
 .carousel-inner img {
   width: 100%;
   height: 100vh;
   object-fit: cover;
 }
 
-/* Caption Box (Common Style) */
 .carousel-caption-box {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(50, 50, 50, 0.6); /* Semi-transparent gray */
-  color: white;
+  background: rgba(0, 0, 0, 0.6); /* Dark transparent box */
+  color: #1DB954;
   padding: 20px;
   max-width: 350px;
   border-radius: 8px;
@@ -46,49 +67,53 @@ h1, p {
   font-size: 1.8rem;
   font-weight: bold;
   margin-bottom: 10px;
+  color: #1DB954;
 }
 
 .carousel-caption-box p {
   font-size: 1rem;
   line-height: 1.5;
+  color: #fff;
 }
 
-/* Left & Right positioning */
 .carousel-caption-box.right {
   right: 5%;
 }
-
 .carousel-caption-box.left {
   left: 5%;
 }
 
-/* Info Section */
+/* ================================
+   Info Section
+   ================================ */
 .info-section {
   padding: 60px 20px;
-  background-color: #fff;
+  background-color: #000; /* Black background */
   text-align: center;
 }
 
 .info-section h2 {
-  color: #28a745; /* Green title */
+  color: #1DB954;
   font-size: 2rem;
   margin-bottom: 20px;
   letter-spacing: 2px;
 }
 
 .info-section p {
-  color: #333; /* Dark text */
+  color: #fff; /* White for readability */
   font-size: 1.1rem;
   line-height: 1.6;
   max-width: 800px;
   margin: 0 auto;
 }
 
-/* Full-Screen Split Section */
+/* ================================
+   Split Section
+   ================================ */
 .split-section {
   display: flex;
   flex-direction: row;
-  height: 100vh; /* Full screen height */
+  height: 100vh;
   width: 100%;
 }
 
@@ -104,7 +129,7 @@ h1, p {
 
 .split-text {
   flex: 1;
-  background-color: #fff;
+  background-color: #000;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -114,33 +139,34 @@ h1, p {
 }
 
 .split-text h2 {
-  color: #28a745;
+  color: #1DB954;
   font-size: 2.5rem;
   margin-bottom: 20px;
 }
 
 .split-text p {
-  color: #333;
+  color: #fff;
   font-size: 1.2rem;
   line-height: 1.6;
 }
 
-/* Image Grid Section */
+/* ================================
+   Image Grid
+   ================================ */
 .image-grid-section {
-  background-color: #fff;
+  background-color: #000;
   text-align: center;
   padding: 50px 20px;
-  
 }
 
 .image-grid-section h2 {
-  color: #28a745;
+  color: #1DB954;
   font-size: 2rem;
   margin-bottom: 10px;
 }
 
 .image-grid-section p {
-  color: #333;
+  color: #fff;
   font-size: 1rem;
   margin-bottom: 30px;
 }
@@ -158,31 +184,36 @@ h1, p {
   height: 250px;
   object-fit: cover;
   border-radius: 6px;
-  transition: transform 0.3s ease;
+  border: 2px solid #1DB954;
+  transition: transform 0.3s ease, border-color 0.3s ease;
 }
 
 .image-grid img:hover {
   transform: scale(1.05);
+  border-color: #fff;
 }
 
-/* Footer Styles */
+/* ================================
+   Footer
+   ================================ */
 .footer {
-  background-color: #28a745;
-  color: white;
+  background-color: #0a4e07;
+  color: #1DB954;
   text-align: center;
   padding: 30px 20px;
   font-family: Arial, sans-serif;
-  
 }
 
 .footer h4 {
   margin-bottom: 10px;
   font-size: 1.5rem;
+  color: #1DB954;
 }
 
 .footer p {
   margin: 5px 0;
   font-size: 1rem;
+  color: #fff;
 }
 
 .footer .social-icons {
@@ -190,18 +221,18 @@ h1, p {
 }
 
 .footer .social-icons a {
-  color: white;
+  color: #1DB954;
   margin: 0 10px;
   font-size: 1.5rem;
   transition: color 0.3s ease;
 }
 
 .footer .social-icons a:hover {
-  color: #f1f1f1;
+  color: #fff;
 }
 
 .footer .copyright {
   margin-top: 15px;
   font-size: 0.9rem;
-  color: #e0e0e0;
+  color: #aaa;
 }

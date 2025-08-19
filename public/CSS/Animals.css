@@ -1,0 +1,51 @@
+/* animals.css */
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #000; /* black background */
+  color: #1DB954;   /* green text */
+}
+
+.wrapper {
+  width: 80%;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 2em;
+  color: #1DB954;
+}
+
+main {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.animal {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Force image size to 0.5in x 0.5in */
+.animal img {
+  width: 48px !important;   /* half inch */
+  height: 48px !important;  /* half inch */
+  object-fit: cover;
+  border-radius: 5px;
+  border: 1px solid #1DB954;
+}
+
+.animal p {
+  font-size: 1.1em;
+  margin: 0;
+  color: #1DB954;
+}
