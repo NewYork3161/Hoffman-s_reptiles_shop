@@ -29,12 +29,20 @@ app.get('/animals', (req, res) => {
     res.render('animals', { title: 'Animals' });
 });
 
-// Lizards Page
+// Lizards Page (the button on Animals page goes here)
 app.get('/lizards', (req, res) => {
     res.render('lizards', { title: 'Lizards' });
 });
 
+// Monitor Lizard Inventory Page (linked from /lizards)
+app.get('/monitor_lizard_inventory', (req, res) => {
+    res.render('monitor_lizard_inventory', { title: 'Monitor Lizard Inventory' });
+});
 
+// Asian Water Monitor Page (linked from /monitor_lizard_inventory)
+app.get('/asian_water_monitor', (req, res) => {
+    res.render('asian_water_monitor', { title: 'Asian Water Monitor' });
+});
 
 // Gallery Page
 app.get('/gallery', (req, res) => {
@@ -148,5 +156,5 @@ app.get('/robots.txt', (req, res) => {
 
 // ---------------- START SERVER ---------------- //
 app.listen(PORT, () => {
-    console.log(`🚀 Server running at http://localhost:${PORT}`);
+    console.log(`Server running at http://localhost:${PORT}`);
 });
