@@ -34,10 +34,7 @@ app.get('/lizards', (req, res) => {
     res.render('lizards', { title: 'Lizards' });
 });
 
-// Frogs Page
-app.get('/frogs', (req, res) => {
-    res.render('frogs', { title: 'Frogs' });
-});
+
 
 // Gallery Page
 app.get('/gallery', (req, res) => {
