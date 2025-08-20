@@ -5,48 +5,91 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Gallery - Hoffman's Reptile Shop</title>
 
-    <!-- (Optional) keep favicon local if it works for you
-         If not, comment the next line and use an external icon -->
-    <link rel="icon" type="image/png" href="/images/Logo.png" />
-
+    <link rel="icon" type="image/png" href="/Images/Logo.png" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <style>
-        body { background-color:#000; color:#28a745; }
+        body {
+            background-color: #000; /* Black background */
+            color: #28a745; /* Green text */
+        }
 
         /* Navbar */
-        .navbar { background-color:#fff !important; }
-        .navbar .nav-link, .navbar .navbar-brand span { color:#28a745 !important; font-weight:bold; }
-        .navbar .nav-link:hover { text-decoration:underline; }
-
-        /* Hero Section (EXTERNAL IMAGE) */
-        .hero{
-            width:100%; height:60vh;
-            background:url('https://images.unsplash.com/photo-1614854262340-9f48f4d96703?q=80&w=1600&auto=format&fit=crop') no-repeat center center / cover;
-            display:flex; align-items:center; justify-content:center; text-align:center;
+        .navbar {
+            background-color: #fff !important; /* White navbar */
         }
-        .hero h1,.hero p{ color:#28a745; text-shadow:2px 2px 10px rgba(0,0,0,.8); }
+        .navbar .nav-link,
+        .navbar .navbar-brand span {
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+        .navbar .nav-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Hero Section */
+        .hero {
+            width: 100%;
+            height: 60vh;
+            background: url('/Images/hero_image_gallery.png') no-repeat center center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+        .hero h1, .hero p {
+            color: #28a745; /* Green text */
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+        }
 
         /* Info Section */
-        .info-section{ padding:40px 20px; color:#28a745; }
+        .info-section {
+            padding: 40px 20px;
+            color: #28a745;
+        }
 
-        /* Image Grid (4x2) */
-        .image-grid{
-            display:grid; grid-template-columns:repeat(4,1fr);
-            gap:20px; padding:20px; justify-items:center;
+        /* Image Grid (4 top, 4 bottom) */
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            padding: 20px;
+            justify-items: center;
         }
-        .image-grid img{
-            width:100%; max-width:350px; height:250px; object-fit:cover;
-            border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,.6); transition:transform .3s ease;
+        .image-grid img {
+            width: 100%;
+            max-width: 350px;
+            height: 250px; /* lock size */
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
+            transition: transform 0.3s ease;
         }
-        .image-grid img:hover{ transform:scale(1.05); }
+        .image-grid img:hover {
+            transform: scale(1.05);
+        }
 
         /* Footer */
-        .footer{ background:#28a745; color:#000; padding:20px 0; }
-        .footer h4,.footer p{ margin:5px 0; font-weight:bold; }
-        .footer .social-icons a{ color:#000; margin:0 10px; font-size:1.2rem; }
-        .footer .social-icons a:hover{ color:#fff; }
+        .footer {
+            background: #28a745; /* Green footer */
+            color: #000; /* Black text on footer */
+            padding: 20px 0;
+        }
+        .footer h4,
+        .footer p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .footer .social-icons a {
+            color: #000;
+            margin: 0 10px;
+            font-size: 1.2rem;
+        }
+        .footer .social-icons a:hover {
+            color: #fff;
+        }
     </style>
 </head>
 <body>
@@ -54,8 +97,7 @@
     <nav class="navbar navbar-expand-md fixed-top shadow-lg">
         <div class="container">
             <a class="navbar-brand d-flex align-items-center" href="/home">
-                <!-- If your local logo fails on Render, swap this to an external logo too -->
-                <img src="/images/Logo.png" alt="Logo" height="40" class="me-2" />
+                <img src="/Images/Logo.png" alt="Logo" height="40" class="me-2" />
                 <span>Hoffman's Reptile Shop</span>
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
@@ -87,17 +129,17 @@
         <p>A look at some of our reptiles and animals. Visit our shop for the full collection.</p>
     </section>
 
-    <!-- Image Grid (EXTERNAL IMAGES) -->
+    <!-- Image Grid -->
     <section class="image-grid-section">
         <div class="image-grid">
-            <img src="https://images.unsplash.com/photo-1599382102633-1a86d3f1f9e4?q=80&w=1200&auto=format&fit=crop" alt="Animal 1" />
-            <img src="https://images.unsplash.com/photo-1552410260-0fd9b6021cbd?q=80&w=1200&auto=format&fit=crop" alt="Animal 2" />
-            <img src="https://images.unsplash.com/photo-1591228128480-48b74b88f3ef?q=80&w=1200&auto=format&fit=crop" alt="Animal 3" />
-            <img src="https://images.unsplash.com/photo-1504280390368-3971f6601f5b?q=80&w=1200&auto=format&fit=crop" alt="Animal 4" />
-            <img src="https://images.unsplash.com/photo-1518288774672-b94e808873ff?q=80&w=1200&auto=format&fit=crop" alt="Animal 5" />
-            <img src="https://images.unsplash.com/photo-1544551763-7ef420be2a37?q=80&w=1200&auto=format&fit=crop" alt="Animal 6" />
-            <img src="https://images.unsplash.com/photo-1549640360-7197f2be3d35?q=80&w=1200&auto=format&fit=crop" alt="Animal 7" />
-            <img src="https://images.unsplash.com/photo-1566417719390-7f5cf7a2f0a4?q=80&w=1200&auto=format&fit=crop" alt="Animal 8" />
+            <img src="/images/1.png" alt="Animal 1" />
+            <img src="/images/2.png" alt="Animal 2" />
+            <img src="/images/3.png" alt="Animal 3" />
+            <img src="/images/baby_blue_iguana.png" alt="Animal 4" />
+            <img src="/images/chubby_frog.png" alt="Animal 5" />
+            <img src="/images/6.png" alt="Animal 6" />
+            <img src="/images/7.png" alt="Animal 7" />
+            <img src="/images/8.png" alt="Animal 8" />
         </div>
     </section>
 
