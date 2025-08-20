@@ -60,7 +60,7 @@ app.get('/salamanders', (req, res) => {
 
 // Gallery Page
 app.get('/gallery', (req, res) => {
-    res.render('gallery', { title: 'Gallery' });
+    res.render('mainGallery', { title: 'Gallery' });
 });
 
 // About Page
