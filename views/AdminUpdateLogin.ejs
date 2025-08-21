@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title><%= title || 'Admin - Update Login' %></title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .update-container {
+      background: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      max-width: 480px;
+      width: 100%;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    .btn-custom { width: 100%; }
+    .note { font-size: 0.9rem; color: #ccc; margin-top: 0.5rem; }
+  </style>
+</head>
+<body>
+  <div class="update-container">
+    <h2 class="text-center mb-3">Update Admin Login</h2>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+      <div class="alert alert-warning py-2"><%= msg %></div>
+    <% } %>
+
+    <!-- Forgot Password -->
+    <form class="mb-4" method="POST" action="/admin/forgot-password" novalidate>
+      <label for="forgotPasswordEmail" class="form-label">Forgot Password</label>
+      <input type="email" class="form-control" id="forgotPasswordEmail" name="email"
+             placeholder="Enter your email" required />
+      <div class="note">Use your email to reset your password. We’ll email you a link.</div>
+      <button class="btn btn-primary btn-custom mt-3" type="submit">Send Reset Link</button>
+    </form>
+
+    <hr class="text-light">
+
+    <!-- Forgot Email -->
+    <form class="mb-2" method="POST" action="/admin/forgot-email" novalidate>
+      <label for="forgotEmailPhone" class="form-label">Forgot Email</label>
+      <input type="tel" class="form-control" id="forgotEmailPhone" name="phone"
+             placeholder="Enter your phone number" required />
+      <div class="note">Use your phone number to recover your email and account information.</div>
+      <!-- ✅ Changed btn-success → btn-primary -->
+      <button class="btn btn-primary btn-custom mt-3" type="submit">Send Recovery Link</button>
+    </form>
+
+    <div class="text-center mt-4">
+      <a href="/admin/login" class="text-decoration-none text-info">Back to Admin Login</a>
+    </div>
+  </div>
+</body>
+</html>

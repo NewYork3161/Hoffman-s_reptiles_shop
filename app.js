@@ -3,7 +3,6 @@ const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
 const express = require('express');
-const fs = require('fs');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -34,27 +33,6 @@ mongoose
     process.exit(1);
   });
 
-/* ---------------- LOAD ADMIN MODEL (absolute + checks) ---------------- */
-const modelsDir = path.join(__dirname, 'models');
-const adminModelPath = path.join(modelsDir, 'AdminUser.js');
-
-try {
-  console.log('DEBUG models dir exists?', fs.existsSync(modelsDir));
-  if (fs.existsSync(modelsDir)) {
-    console.log('DEBUG models dir listing:', fs.readdirSync(modelsDir));
-  }
-  console.log('DEBUG Admin model path:', adminModelPath);
-  if (!fs.existsSync(adminModelPath)) {
-    throw new Error(`Model file not found at ${adminModelPath}`);
-  }
-} catch (e) {
-  console.error('❌ Model path check failed:', e.message);
-  process.exit(1);
-}
-
-// IMPORTANT: absolute require so there’s zero ambiguity
-const AdminUser = require(adminModelPath);
-
 /* ---------------- VIEW ENGINE ---------------- */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -84,19 +62,7 @@ app.use(
   })
 );
 
-// expose logged-in admin to views
-app.use((req, res, next) => {
-  res.locals.admin = req.session.admin || null;
-  next();
-});
-
-/* ---------------- AUTH GUARD ---------------- */
-function requireAdmin(req, res, next) {
-  if (req.session && req.session.admin) return next();
-  return res.redirect('/admin/login?msg=Please%20log%20in');
-}
-
-/* ---------------- ROUTES ---------------- */
+/* ---------------- PUBLIC ROUTES ONLY ---------------- */
 
 // Home Page
 app.get('/home', (req, res) => {
@@ -170,56 +136,6 @@ app.get('/contact', (req, res) => {
   });
 });
 
-/* ---------------- ADMIN LOGIN (MONGOOSE + SESSIONS) ---------------- */
-
-// Render admin login page
-app.get('/admin/login', (req, res) => {
-  res.render('AdminLogin', {
-    title: 'Admin Login',
-    metaDescription: 'Administrator login for site management.',
-    metaKeywords: 'admin, login, dashboard',
-    msg: req.query.msg || null,
-  });
-});
-
-// Handle admin login POST (checks MongoDB credentials)
-app.post('/admin/login', async (req, res) => {
-  try {
-    const { email, password } = req.body;
-
-    const admin = await AdminUser.findOne({ email: (email || '').trim().toLowerCase() });
-    if (!admin) {
-      return res.redirect('/admin/login?msg=Invalid%20credentials');
-    }
-
-    const ok = await admin.comparePassword(password || '');
-    if (!ok) {
-      return res.redirect('/admin/login?msg=Invalid%20credentials');
-    }
-
-    req.session.admin = { id: admin._id.toString(), email: admin.email };
-    return res.redirect('/admin/dashboard');
-  } catch (err) {
-    console.error('LOGIN ERROR:', err);
-    return res.redirect('/admin/login?msg=Login%20error');
-  }
-});
-
-// Admin logout
-app.post('/admin/logout', (req, res) => {
-  req.session.destroy(() => {
-    res.redirect('/admin/login?msg=Logged%20out');
-  });
-});
-
-// Protected dashboard (placeholder)
-app.get('/admin/dashboard', requireAdmin, (req, res) => {
-  res.render('admin_dashboard', {
-    title: 'Admin Dashboard',
-    metaDescription: 'Admin tools',
-  });
-});
-
 /* ---------------- CONTACT FORM EMAIL ROUTE ---------------- */
 app.post('/send-email', async (req, res) => {
   const { name, email, message } = req.body;
@@ -245,50 +161,20 @@ app.post('/send-email', async (req, res) => {
       from: 'hudsonriver4151@gmail.com',
       to: email,
       subject: "Thanks for contacting Hoffman's Reptile Shop!",
-      html: `
-        <div style="font-family: Arial, sans-serif; color:#333; padding:20px; background:#f9f9f9; border-radius:8px;">
-          <h2 style="color:#28a745;">Thank you for your interest, ${name || 'Friend'}!</h2>
-          <p>We’ve received your message and will get back to you as soon as possible.</p>
-          <p><strong>Address:</strong> 2359 Concord Blvd, Concord, CA 94520</p>
-          <p><strong>Phone:</strong> (925) 761-9106</p>
-          <p><strong>Hours:</strong><br/>Mon–Fri: 12 PM – 6:30 PM<br/>Sat: 10 AM – 5 PM<br/>Sun: Closed</p>
-          <p>
-            <a href="tel:+19257619106" style="display:inline-block; margin:10px 5px; padding:12px 20px; background:#28a745; color:#fff; text-decoration:none; border-radius:5px;">Call Now</a>
-            <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" target="_blank" style="display:inline-block; margin:10px 5px; padding:12px 20px; background:#007bff; color:#fff; text-decoration:none; border-radius:5px;">View Map</a>
-          </p>
-          <p>Thanks again for reaching out — we appreciate reptile lovers like you!</p>
-          <p>– Hoffman's Reptile Shop</p>
-        </div>
-      `,
+      html: `<p>Thanks ${name || 'Friend'}! We’ll get back to you soon.</p>`,
     });
 
-    res.send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-          <meta charset="UTF-8">
-          <title>Email Sent</title>
-          <meta http-equiv="refresh" content="10;url=/contact" />
-          <style>
-              body { font-family: Arial, sans-serif; background:#f4f4f4; display:flex; align-items:center; justify-content:center; height:100vh; margin:0; }
-              .message-box { background:#fff; padding:30px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2); text-align:center; max-width:500px; }
-              h1 { color:#28a745; }
-          </style>
-      </head>
-      <body>
-          <div class="message-box">
-              <h1>Your Email Has Been Sent!</h1>
-              <p>Thank you for your interest in Hoffman's Reptiles.</p>
-              <p>You will be redirected back to the Contact page in <strong>10 seconds</strong>.</p>
-          </div>
-      </body>
-      </html>
-    `);
+    res.send('<h1>Email sent successfully!</h1>');
   } catch (err) {
     console.error('EMAIL ERROR:', err);
     res.status(500).send('Error sending message: ' + err.message);
   }
 });
+
+/* ---------------- MOUNT ADMIN ROUTES (separate file) ---------------- */
+// This keeps ONE server. All admin code lives in ./adminapp.js
+const adminRouter = require('./adminapp');
+app.use('/admin', adminRouter);
 
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));

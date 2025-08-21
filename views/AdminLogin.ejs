@@ -26,11 +26,17 @@
       margin-bottom: 1.5rem;
       text-align: center;
     }
+    .small-muted { color:#bbb; font-size:.9rem; text-align:center; }
   </style>
 </head>
 <body>
   <div class="login-container">
     <h2>Admin Login</h2>
+
+    <% if (typeof msg !== 'undefined' && msg) { %>
+      <div class="alert alert-warning py-2"><%= msg %></div>
+    <% } %>
+
     <form action="/admin/login" method="POST">
       <div class="mb-3">
         <label for="email" class="form-label">Email address</label>
@@ -42,6 +48,14 @@
       </div>
       <button type="submit" class="btn btn-primary w-100">Login</button>
     </form>
+
+    <div class="mt-3">
+      <a href="/admin/register" class="btn btn-primary w-100 mb-2">Create New Account</a>
+      <div class="small-muted mb-3">Need an account? Create one here.</div>
+
+      <!-- New Update Login Button -->
+      <a href="/admin/update-login" class="btn btn-primary w-100">Update Login</a>
+    </div>
   </div>
 </body>
 </html>

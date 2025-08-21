@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Dashboard</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background-color: #f8f9fa;
+    }
+    .sidebar {
+      height: 100vh;
+      width: 250px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      background-color: #212529;
+      padding-top: 60px;
+    }
+    .sidebar a, .sidebar form button {
+      padding: 15px 20px;
+      text-decoration: none;
+      font-size: 1rem;
+      color: #ddd;
+      display: block;
+      background: none;
+      border: none;
+      text-align: left;
+      width: 100%;
+    }
+    .sidebar a:hover, .sidebar form button:hover {
+      background-color: #495057;
+      color: #fff;
+      cursor: pointer;
+    }
+    .topbar {
+      width: calc(100% - 250px);
+      margin-left: 250px;
+      height: 60px;
+      background-color: #343a40;
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      color: #fff;
+    }
+    .content {
+      margin-left: 250px;
+      padding: 20px;
+    }
+    .card {
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <h4 class="text-light text-center">Admin Panel</h4>
+    <a href="/admin/dashboard">Dashboard</a>
+    <a href="/manage-users">Manage Users</a>
+    <a href="/reports">Reports</a>
+    <a href="/settings">Settings</a>
+
+    <!-- ✅ Logout form (POST) -->
+    <form action="/admin/logout" method="POST">
+      <button type="submit">Logout</button>
+    </form>
+  </div>
+
+  <!-- Topbar -->
+  <div class="topbar">
+    <h5>Welcome, Admin</h5>
+  </div>
+
+  <!-- Content -->
+  <div class="content">
+    <h2>Dashboard Overview</h2>
+    <div class="row mt-4">
+      <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+          <h5>Total Users</h5>
+          <p><strong>150</strong></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+          <h5>Active Sessions</h5>
+          <p><strong>32</strong></p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card p-3 shadow-sm">
+          <h5>Reports Pending</h5>
+          <p><strong>5</strong></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <h4>Recent Activity</h4>
+      <ul class="list-group">
+        <li class="list-group-item">User JohnDoe reset password</li>
+        <li class="list-group-item">New user registered: Jane Smith</li>
+        <li class="list-group-item">Admin updated settings</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>
