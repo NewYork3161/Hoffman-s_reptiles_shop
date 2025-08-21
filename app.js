@@ -21,42 +21,74 @@ app.use(bodyParser.json());
 
 // Home Page
 app.get('/home', (req, res) => {
-    res.render('index', { title: 'Home Page' });
+    res.render('index', {
+        title: 'Home Page',
+        metaDescription: 'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
+        metaKeywords: 'reptiles, snakes, lizards, Concord reptile shop, exotic pets California'
+    });
 });
 
 // Animals Page
 app.get('/animals', (req, res) => {
-    res.render('animals', { title: 'Animals' });
+    res.render('animals', {
+        title: 'Animals',
+        metaDescription: 'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
+        metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA'
+    });
 });
 
 // Lizards Page (the button on Animals page goes here)
 app.get('/lizards', (req, res) => {
-    res.render('lizards', { title: 'Lizards' });
+    res.render('lizards', {
+        title: 'Lizards',
+        metaDescription: 'Explore exotic lizards for sale including monitors and iguanas.',
+        metaKeywords: 'lizards, monitor lizards, iguanas, Concord reptiles, California reptile shop'
+    });
 });
 
 // Monitor Lizard Inventory Page (linked from /lizards)
 app.get('/monitor_lizard_inventory', (req, res) => {
-    res.render('monitor_lizard_inventory', { title: 'Monitor Lizard Inventory' });
+    res.render('monitor_lizard_inventory', {
+        title: 'Monitor Lizard Inventory',
+        metaDescription: 'Monitor lizard inventory including Asian water monitors and other species.',
+        metaKeywords: 'monitor lizards, Asian water monitor, reptiles for sale Concord CA'
+    });
 });
 
 // Asian Water Monitor Page (linked from /monitor_lizard_inventory)
 app.get('/asian_water_monitor', (req, res) => {
-    res.render('asian_water_monitor', { title: 'Asian Water Monitor' });
+    res.render('asian_water_monitor', {
+        title: 'Asian Water Monitor',
+        metaDescription: 'Asian Water Monitors available at Hoffman’s Reptile Shop in Concord, CA.',
+        metaKeywords: 'Asian water monitor, monitor lizards, reptiles Concord California'
+    });
 });
 
 // Gallery Page
 app.get('/gallery', (req, res) => {
-    res.render('mainGallery', { title: 'Gallery' });
+    res.render('mainGallery', {
+        title: 'Gallery',
+        metaDescription: 'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
+        metaKeywords: 'reptile gallery, exotic animals, lizards, snakes, Concord CA'
+    });
 });
 
 // About Page
 app.get('/about', (req, res) => {
-    res.render('about', { title: 'About Us' });
+    res.render('about', {
+        title: 'About Us',
+        metaDescription: 'Learn about Hoffman’s Reptile Shop in Concord, California.',
+        metaKeywords: 'about Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store'
+    });
 });
 
 // Contact Page
 app.get('/contact', (req, res) => {
-    res.render('contact', { title: 'Contact' });
+    res.render('contact', {
+        title: 'Contact',
+        metaDescription: 'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
+        metaKeywords: 'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store'
+    });
 });
 
 // ---------------- CONTACT FORM EMAIL ROUTE ---------------- //

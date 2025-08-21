@@ -3,25 +3,140 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Shop lizards at Hoffman's Reptile Shop in Walnut Creek. Iguanas, geckos, monitors, bearded dragons, and more." />
+  <meta name="keywords" content="lizards for sale, iguanas, geckos, bearded dragons, monitors, exotic lizards Walnut Creek, Bay Area reptile store" />
+
   <title>Lizard Inventory</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    :root {
+      --green:#1DB954;
+      --bg:#000;
+      --hero-h: 900px;
+      --section-gap: 384px; /* ~4 inches */
+    }
+
+    html, body { height: 100%; }
+    body {
+      background: var(--bg);
+      color: var(--green);
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      padding-top: 70px;
+      font-family: Arial, sans-serif;
+    }
+
+    .page-content { 
+      flex: 1;
+      position: relative;
+      z-index: 0;
+    }
+
+    h1 { color: var(--green); }
+
+    /* Hero Section */
+    .hero-wrapper {
+      position: relative;
+      width: 100%;
+      z-index: 1;
+      overflow: visible;
+      margin-bottom: var(--section-gap); /* space below hero */
+    }
+    .hero-wrapper img {
+      display: block;
+      width: 100%;
+      height: var(--hero-h);
+      object-fit: cover;
+    }
+    .hero-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0,0,0,0.6);
+      padding: 15px 25px;
+      border-radius: 8px;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: var(--green);
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    /* Animal List Section */
+    .animal-section {
+      margin-bottom: var(--section-gap); /* space before footer */
+    }
+
+    /* Tile link (image + caption) */
+    .tile {
+      display: block;
+      text-decoration: none;
+      color: var(--green);
+    }
+    .tile-img {
+      width: 170px;
+      height: 115px;
+      object-fit: contain;
+      display: block;
+      border-radius: 10px;
+      border: 2px solid var(--green);
+      margin: 0 auto;
+      background-color: #000;
+      transition: transform .2s ease;
+    }
+    .tile:hover .tile-img { transform: scale(1.03); }
+
+    .tile-caption {
+      text-align: center;
+      background: transparent;
+      margin-top: 10px;
+    }
+    .tile-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .tile-text { margin: 0; }
+
+    .btn-success { margin-top: 12px; }
+  </style>
 </head>
-<body class="bg-dark text-light">
+<body>
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
 
-  <div class="container py-5">
-    <!-- Page Title -->
-    <h1 class="text-center mb-4">Lizard Inventory</h1>
-
-    <!-- Button for Monitor Lizards -->
-    <div class="text-center mt-4">
-      <a href="/monitor_lizard_inventory" class="btn btn-success btn-lg">Monitor Lizards</a>
-    </div>
+  <!-- Hero Section -->
+  <div class="hero-wrapper">
+    <img src="/Images/lizard_inventory_image.png" alt="Lizard Inventory Hero" />
+    <div class="hero-title">Lizard Inventory</div>
   </div>
 
+  <main class="page-content">
+    <!-- Animal Section -->
+    <div class="container py-5 animal-section">
+      <div class="row justify-content-start g-4">
+        <!-- MONITOR LIZARDS TILE -->
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 d-flex">
+          <div class="w-100 text-center">
+            <a href="/monitor_lizard_inventory" class="tile">
+              <img src="/Images/asian_water_monitor_baby.png" alt="Monitor Lizards" class="tile-img" />
+              <div class="tile-caption">
+                <div class="tile-title">Monitor Lizards</div>
+                <p class="tile-text">Click image or text to view our monitor lizard inventory.</p>
+              </div>
+            </a>
+            <a href="/monitor_lizard_inventory" class="btn btn-success btn-lg">Monitor Lizards</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
   <!-- Footer -->
-  <footer class="text-center mt-5 py-3 bg-success text-white">
-    <p class="mb-0">© <%= new Date().getFullYear() %> Hoffman's Reptile Shop</p>
-  </footer>
+  <%- include('partials/footer') %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

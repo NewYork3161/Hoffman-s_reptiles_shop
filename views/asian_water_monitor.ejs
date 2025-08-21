@@ -5,30 +5,177 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Asian Water Monitor</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    :root{
+      --navbar-offset:70px;
+      --monitor-img-w:360px;
+      --section-gap:384px;
+      --green:#1DB954;              /* brighter green */
+      --glass: rgba(255,255,255,0.06);
+      --stroke: rgba(255,255,255,0.14);
+    }
+
+    html, body { height:100%; }
+    body{
+      background:#000;
+      color:var(--green);
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      padding-top:var(--navbar-offset);
+      font-family:Arial, sans-serif;
+    }
+
+    .page-content{ flex:1; }
+
+    h1, h2, h3, p, li, strong{ color:var(--green); }
+
+    /* Extra spacing under navbar for title */
+    .page-title {
+      margin-top: 30px;   /* creates the gap */
+      text-align: center;
+      color: var(--green);
+    }
+
+    .asian-monitor-img{
+      width:var(--monitor-img-w);
+      max-width:100%;
+      height:auto;
+      display:block;
+      margin:0 auto 1rem;
+      border-radius:10px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.7);
+    }
+
+    .price-tag{
+      font-size:1.75rem;
+      font-weight:800;
+      letter-spacing:.5px;
+      text-align:center;
+      margin-bottom:1.5rem;
+      color:var(--green);
+    }
+
+    .care-card{
+      background:var(--glass);
+      border:1px solid var(--stroke);
+      border-radius:16px;
+      padding:1.25rem;
+    }
+    .care-card h2{
+      font-size:1.25rem;
+      margin-bottom:.75rem;
+      text-transform:uppercase;
+      letter-spacing:.06em;
+      color:var(--green);
+    }
+    .care-grid{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:1rem;
+    }
+    @media (min-width: 768px){
+      .care-grid{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .care-box{
+      background:rgba(0,0,0,0.35);
+      border:1px solid var(--stroke);
+      border-radius:12px;
+      padding:1rem;
+      height:100%;
+    }
+    .care-box h3{ font-size:1.05rem; margin-bottom:.5rem; color:var(--green); }
+    .care-box ul{ margin:0; padding-left:1.1rem; }
+    .care-box li{ color:var(--green); }
+
+    .care-note{
+      font-size:.95rem;
+      margin-top:1rem;
+      color:var(--green);
+    }
+
+    .monitor-section{ margin-bottom:var(--section-gap); }
+  </style>
 </head>
-<body class="bg-dark text-light">
+<body>
+  <%- include('partials/navbar') %>
 
-  <div class="container py-5">
-    <!-- Page Title -->
-    <h1 class="text-center mb-4">Asian Water Monitor</h1>
+  <main class="page-content">
+    <div class="container py-5 monitor-section">
+      <!-- Title -->
+      <h1 class="page-title mb-4">Asian Water Monitor</h1>
 
-    <!-- Image Section -->
-    <div class="text-center">
-      <img src="/Images/inventory_image_Asian water_monitor.png" 
-           alt="Asian Water Monitor" 
-           class="img-fluid rounded shadow">
+      <!-- Image -->
+      <div class="text-center">
+        <img
+          src="/Images/inventory_image_Asian water_monitor.png"
+          alt="Asian Water Monitor"
+          class="asian-monitor-img"
+        />
+      </div>
+
+      <!-- Price -->
+      <div class="price-tag">$350</div>
+
+      <!-- Care Guide -->
+      <section class="care-card">
+        <h2>Care Guide (Quick Reference)</h2>
+
+        <div class="care-grid">
+          <!-- BABY -->
+          <div class="care-box">
+            <h3>Baby (Hatchling – ~10–14&quot;)</h3>
+            <ul>
+              <li><strong>Enclosure (min):</strong> 36&quot; × 18&quot; × 16&quot; (~40 gal) with a swim pan.</li>
+              <li><strong>Humidity:</strong> 60–70%.</li>
+              <li><strong>Temps:</strong> Ambient mid-80s °F; <strong>bask</strong> 120–140 °F.</li>
+              <li><strong>UVB/Light:</strong> High-output T5 UVB or metal-halide; provide full-body bask zone.</li>
+              <li><strong>Feeding:</strong> Daily to every other day; gut-loaded insects (roaches/crickets), occasional fish; small rodents sparingly; dust Ca+D3 as advised.</li>
+            </ul>
+          </div>
+
+          <!-- JUVENILE -->
+          <div class="care-box">
+            <h3>Juvenile (~3–4 ft)</h3>
+            <ul>
+              <li><strong>Enclosure (min):</strong> ~4' × 4' × 4' (larger is better); climbing + large water tub.</li>
+              <li><strong>Humidity:</strong> 60–70%.</li>
+              <li><strong>Temps:</strong> Ambient mid-80s °F; <strong>bask</strong> 125–140 °F.</li>
+              <li><strong>UVB/Light:</strong> Strong UVB; follow lamp UVI guidance; provide shade options.</li>
+              <li><strong>Feeding:</strong> 3–4×/week; insects, rodents, fish/eggs; avoid obesity.</li>
+            </ul>
+          </div>
+
+          <!-- ADULT -->
+          <div class="care-box">
+            <h3>Adult (5–8+ ft typical)</h3>
+            <ul>
+              <li><strong>Enclosure (min):</strong> ~8' × 6' × 8' (room size better); deep water feature.</li>
+              <li><strong>Humidity:</strong> 60–70%; ensure ventilation.</li>
+              <li><strong>Temps:</strong> Ambient mid-80s °F; <strong>bask</strong> 125–140 °F; allow cool retreat.</li>
+              <li><strong>UVB/Light:</strong> Full-spectrum with strong UVB; follow manufacturer distance charts.</li>
+              <li><strong>Feeding:</strong> 2–3×/week; whole-prey focus (rodents, fish, eggs); rotate items.</li>
+            </ul>
+          </div>
+        </div>
+
+        <p class="care-note">
+          <strong>Heating & Lamp Distance:</strong> Use a temp gun to set basking surface at 120–140 °F. As a <em>starting point</em>, many 150 W ceramic heat emitters and flood lamps end up ~12–18&quot; above the basking spot in tall enclosures. Never place heat lamps closer than ~12&quot; (≈30 cm). Adjust height/wattage to hit temps safely.<br><br>
+          <strong>Nighttime:</strong> Provide a heat source that does not emit light (e.g., ceramic emitters or radiant heat panels). Ambient should not drop below ~75 °F.<br><br>
+          <strong>Exercise & Enrichment:</strong> Asian Water Monitors are highly active and intelligent. Provide climbing branches, swimming space, and interaction to prevent stress and obesity.
+        </p>
+      </section>
+
+      <!-- Back Button -->
+      <div class="text-center mt-4">
+        <a href="/monitor_lizard_inventory" class="btn btn-success btn-lg">Back to Inventory</a>
+      </div>
     </div>
+  </main>
 
-    <!-- Back Button -->
-    <div class="text-center mt-4">
-      <a href="/monitor_lizard_inventory" class="btn btn-success btn-lg">Back to Inventory</a>
-    </div>
-  </div>
-
-  <!-- Footer -->
-  <footer class="text-center mt-5 py-3 bg-success text-white">
-    <p class="mb-0">© <%= new Date().getFullYear() %> Hoffman's Reptile Shop</p>
-  </footer>
+  <%- include('partials/footer') %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

@@ -37,26 +37,7 @@
 
 <body>
     <!-- Fixed Navbar -->
-    <nav class="navbar navbar-expand-md fixed-top bg-white shadow-lg">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/home">
-                <img src="/Images/Logo.png" alt="Logo" height="40" class="me-2">
-                <span class="text-success fw-bold">Hoffman's Reptile Shop</span>
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
-                    <li class="nav-item"><a class="nav-link active" href="/home">HOME</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/animals">ANIMALS</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/gallery">GALLERY</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/about">ABOUT US</a></li>
-                    <li class="nav-item"><a class="nav-link" href="/contact">CONTACT</a></li>
-                </ul>
-            </div>
-        </div>
-    </nav>
+      <%- include('partials/navbar') %>
 
     <!-- Carousel Section -->
     <div id="carouselExampleIndicators" class="carousel slide mt-4" data-bs-ride="carousel">
@@ -134,19 +115,7 @@
     </section>
 
     <!-- Footer Section -->
-    <footer class="footer">
-        <div class="footer-content text-center">
-            <h4>Hoffman's Reptile Shop</h4>
-            <p>2359 Concord Blvd, Concord, CA 94520</p>
-            <p>Phone: (925) 671-9106</p>
-            <p>Hours: Mon-Fri 12 PM - 6:30 PM | Sat 10 AM - 5 PM | Sun Closed</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-            <p class="copyright">© 2025 Hoffman's Reptiles</p>
-        </div>
-    </footer>
+     <%- include('partials/footer') %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>

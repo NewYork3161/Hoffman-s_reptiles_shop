@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Browse all animals at Hoffman's Reptile Shop. Lizards, snakes, tortoises, turtles, and exotic reptiles in Walnut Creek, CA." />
+  <meta name="keywords" content="reptiles for sale, lizards for sale, snakes for sale, tortoises, turtles, exotic pets Walnut Creek, reptile shop Bay Area" />
+
   <title>Animals - Hoffman's Reptile Shop</title>
 
   <!-- Favicon -->
@@ -26,13 +29,7 @@
     }
 
     /* Navbar */
-    .navbar { background-color:#fff !important; box-shadow:0 4px 8px rgba(0,0,0,0.6); }
-    .navbar .navbar-brand span { color:#1a9c48 !important; }
-    .navbar .nav-link { color:#000 !important; font-weight:600; letter-spacing:.02em; transition: color .3s ease; }
-    .navbar .nav-link:hover, .navbar .nav-link:focus { color:var(--green) !important; }
-    .navbar .nav-link.active { color:#000 !important; font-weight:700; }
-    .navbar .nav-link.active:hover { color:var(--green) !important; }
-
+    
     /* Hero image */
     .hero { width: 100%; overflow: hidden; margin-bottom: 30px; }
     .hero img { width: 100%; height: 1000px; display: block; object-fit: cover; }
@@ -90,41 +87,12 @@
     .animal-name { font-size:1.2rem; font-weight:700; margin-top: 8px; color:var(--green); }
 
     /* Footer */
-    footer {
-      margin-top:48px;
-      padding:30px 16px;
-      text-align:center;
-      background:var(--green);
-      color:#000;
-    }
-    footer h2 { margin:0 0 8px 0; color:#fff; font-size:1.8rem; font-weight:700; }
-    footer p { margin:6px 0; font-size:1rem; color:#fff; }
-    footer .copy { margin-top:14px; color:#222; font-size:.95rem; }
+    
   </style>
 </head>
 <body>
   <!-- Sticky Navbar -->
-  <nav class="navbar navbar-expand-md fixed-top shadow-lg navbar-light">
-    <div class="container">
-      <a class="navbar-brand d-flex align-items-center" href="/home">
-        <img src="/Images/Logo.png" alt="Logo" height="40" class="me-2" />
-        <span class="fw-bold">Hoffman's Reptile Shop</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="/home">HOME</a></li>
-          <li class="nav-item"><a class="nav-link active" href="/animals">ANIMALS</a></li>
-          <li class="nav-item"><a class="nav-link" href="/gallery">GALLERY</a></li>
-          <li class="nav-item"><a class="nav-link" href="/about">ABOUT US</a></li>
-          <li class="nav-item"><a class="nav-link" href="/contact">CONTACT</a></li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-
+    <%- include('partials/navbar') %>
   <!-- Hero Image -->
   <div class="hero">
     <img src="/Images/hero_animal_page.png" alt="Hero Animal Page" />
@@ -157,13 +125,7 @@
   </div>
 
   <!-- Footer -->
-  <footer>
-    <h2>Hoffman's Reptile Shop</h2>
-    <p>2359 Concord Blvd, Concord, CA 94520</p>
-    <p>Phone: (925) 671-9106</p>
-    <p>Hours: Mon–Fri 12 PM – 6:30 PM | Sat 10 AM – 5 PM | Sun Closed</p>
-    <div class="copy">© <%= new Date().getFullYear() %> Hoffmann's Reptiles</div>
-  </footer>
+  <%- include('partials/footer') %>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
