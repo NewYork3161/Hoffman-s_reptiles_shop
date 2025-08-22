@@ -1,4 +1,3 @@
-// app.js
 const path = require('path');
 require('dotenv').config({ path: path.join(__dirname, '.env') });
 
@@ -8,6 +7,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoStore = require('connect-mongo');
+const methodOverride = require('method-override');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,6 +33,14 @@ mongoose
     process.exit(1);
   });
 
+/* ---------------- MODELS ---------------- */
+let AdminHomePage;
+try {
+  AdminHomePage = require('./models/Admin_Home_Page');
+} catch (e) {
+  console.warn('⚠️ Could not load ./models/Admin_Home_Page. Make sure the file exists and the name matches.');
+}
+
 /* ---------------- VIEW ENGINE ---------------- */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -43,6 +51,9 @@ app.use(express.static(path.join(__dirname, 'public')));
 /* ---------------- BODY PARSING ---------------- */
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+/* ---------------- METHOD OVERRIDE ---------------- */
+app.use(methodOverride('_method'));
 
 /* ---------------- SESSIONS ---------------- */
 app.use(
@@ -62,22 +73,42 @@ app.use(
   })
 );
 
-/* ---------------- PUBLIC ROUTES ONLY ---------------- */
+/* ---------------- PUBLIC ROUTES ---------------- */
 
-// Home Page
-app.get('/home', (req, res) => {
-  res.render('index', {
-    title: 'Home Page',
-    metaDescription: 'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
-    metaKeywords: 'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
-  });
+// Home Page (now loads data from DB and always defines pageData)
+app.get('/home', async (req, res) => {
+  try {
+    let pageData = null;
+    if (AdminHomePage) {
+      pageData = await AdminHomePage.findOne({}).lean();
+    }
+    res.render('index', {
+      title: 'Home Page',
+      metaDescription:
+        'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
+      metaKeywords:
+        'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
+      pageData: pageData || null,
+    });
+  } catch (err) {
+    console.error('❌ Error loading /home:', err);
+    res.render('index', {
+      title: 'Home Page',
+      metaDescription:
+        'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
+      metaKeywords:
+        'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
+      pageData: null,
+    });
+  }
 });
 
 // Animals Page
 app.get('/animals', (req, res) => {
   res.render('animals', {
     title: 'Animals',
-    metaDescription: 'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
+    metaDescription:
+      'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
     metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
   });
 });
@@ -86,8 +117,10 @@ app.get('/animals', (req, res) => {
 app.get('/lizards', (req, res) => {
   res.render('lizards', {
     title: 'Lizards',
-    metaDescription: 'Explore exotic lizards for sale including monitors and iguanas.',
-    metaKeywords: 'lizards, monitor lizards, iguanas, Concord reptiles, California reptile shop',
+    metaDescription:
+      'Explore exotic lizards for sale including monitors and iguanas.',
+    metaKeywords:
+      'lizards, monitor lizards, iguanas, Concord reptiles, California reptile shop',
   });
 });
 
@@ -95,8 +128,10 @@ app.get('/lizards', (req, res) => {
 app.get('/monitor_lizard_inventory', (req, res) => {
   res.render('monitor_lizard_inventory', {
     title: 'Monitor Lizard Inventory',
-    metaDescription: 'Monitor lizard inventory including Asian water monitors and other species.',
-    metaKeywords: 'monitor lizards, Asian water monitor, reptiles for sale Concord CA',
+    metaDescription:
+      'Monitor lizard inventory including Asian water monitors and other species.',
+    metaKeywords:
+      'monitor lizards, Asian water monitor, reptiles for sale Concord CA',
   });
 });
 
@@ -104,8 +139,10 @@ app.get('/monitor_lizard_inventory', (req, res) => {
 app.get('/asian_water_monitor', (req, res) => {
   res.render('asian_water_monitor', {
     title: 'Asian Water Monitor',
-    metaDescription: 'Asian Water Monitors available at Hoffman’s Reptile Shop in Concord, CA.',
-    metaKeywords: 'Asian water monitor, monitor lizards, reptiles Concord California',
+    metaDescription:
+      'Asian Water Monitors available at Hoffman’s Reptile Shop in Concord, CA.',
+    metaKeywords:
+      'Asian water monitor, monitor lizards, reptiles Concord California',
   });
 });
 
@@ -113,8 +150,10 @@ app.get('/asian_water_monitor', (req, res) => {
 app.get('/gallery', (req, res) => {
   res.render('mainGallery', {
     title: 'Gallery',
-    metaDescription: 'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
-    metaKeywords: 'reptile gallery, exotic animals, lizards, snakes, Concord CA',
+    metaDescription:
+      'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
+    metaKeywords:
+      'reptile gallery, exotic animals, lizards, snakes, Concord CA',
   });
 });
 
@@ -122,8 +161,10 @@ app.get('/gallery', (req, res) => {
 app.get('/about', (req, res) => {
   res.render('about', {
     title: 'About Us',
-    metaDescription: 'Learn about Hoffman’s Reptile Shop in Concord, California.',
-    metaKeywords: 'about Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
+    metaDescription:
+      'Learn about Hoffman’s Reptile Shop in Concord, California.',
+    metaKeywords:
+      'about Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
   });
 });
 
@@ -131,8 +172,10 @@ app.get('/about', (req, res) => {
 app.get('/contact', (req, res) => {
   res.render('contact', {
     title: 'Contact',
-    metaDescription: 'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
-    metaKeywords: 'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
+    metaDescription:
+      'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
+    metaKeywords:
+      'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
   });
 });
 
@@ -140,7 +183,7 @@ app.get('/contact', (req, res) => {
 app.post('/send-email', async (req, res) => {
   const { name, email, message } = req.body;
 
-  let transporter = nodemailer.createTransport({
+  const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'hudsonriver4151@gmail.com',
@@ -171,10 +214,19 @@ app.post('/send-email', async (req, res) => {
   }
 });
 
-/* ---------------- MOUNT ADMIN ROUTES (separate file) ---------------- */
-// This keeps ONE server. All admin code lives in ./adminapp.js
+/* ---------------- ADMIN ROUTES ---------------- */
+
+// main admin system
 const adminRouter = require('./adminapp');
 app.use('/admin', adminRouter);
+
+// dynamic "edit page" routes
+const adminRoutesPage = require('./admin_routes_page');
+app.use('/admin', adminRoutesPage);
+
+// admin home editor routes (point to same file since that’s the one you have)
+const adminHomeRoutes = require('./admin_routes_page');
+app.use('/admin', adminHomeRoutes);
 
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));

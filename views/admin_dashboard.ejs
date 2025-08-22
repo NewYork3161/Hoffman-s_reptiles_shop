@@ -12,104 +12,105 @@
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background-color: #f8f9fa;
+      background-color: #fff;
     }
-    .sidebar {
-      height: 100vh;
-      width: 250px;
-      position: fixed;
-      top: 0;
-      left: 0;
-      background-color: #212529;
-      padding-top: 60px;
+    .navbar {
+      background-color: #343a40 !important;
     }
-    .sidebar a, .sidebar form button {
-      padding: 15px 20px;
-      text-decoration: none;
-      font-size: 1rem;
-      color: #ddd;
-      display: block;
-      background: none;
-      border: none;
-      text-align: left;
-      width: 100%;
+    .navbar-brand {
+      color: #fff !important;
+      font-weight: bold;
     }
-    .sidebar a:hover, .sidebar form button:hover {
-      background-color: #495057;
-      color: #fff;
-      cursor: pointer;
-    }
-    .topbar {
-      width: calc(100% - 250px);
-      margin-left: 250px;
-      height: 60px;
-      background-color: #343a40;
-      display: flex;
-      align-items: center;
-      padding: 0 20px;
-      color: #fff;
+    .dropdown-menu {
+      min-width: 180px;
     }
     .content {
-      margin-left: 250px;
       padding: 20px;
     }
-    .card {
-      border-radius: 10px;
+    iframe {
+      width: 100%;
+      height: 80vh;
+      border: none;
+      margin-top: 10px;
+    }
+    .edit-btn {
+      position: fixed;
+      top: 70px; /* just below the navbar */
+      right: 20px;
+      z-index: 1000;
+      display: none; /* hidden by default */
     }
   </style>
 </head>
 <body>
-  <!-- Sidebar -->
-  <div class="sidebar">
-    <h4 class="text-light text-center">Admin Panel</h4>
-    <a href="/admin/dashboard">Dashboard</a>
-    <a href="/manage-users">Manage Users</a>
-    <a href="/reports">Reports</a>
-    <a href="/settings">Settings</a>
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="#">Admin</a>
 
-    <!-- ✅ Logout form (POST) -->
-    <form action="/admin/logout" method="POST">
-      <button type="submit">Logout</button>
-    </form>
-  </div>
+      <!-- Dropdown Menu -->
+      <div class="dropdown ms-auto">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Menu
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item load-page" data-url="/home" data-edit="/admin/edit/home" href="#">Homepage</a></li>
+          <li><a class="dropdown-item load-page" data-url="/animals" data-edit="/admin/edit/animals" href="#">Animals</a></li>
+          <li><a class="dropdown-item load-page" data-url="/gallery" data-edit="/admin/edit/gallery" href="#">Gallery</a></li>
+          <li><a class="dropdown-item load-page" data-url="/about" data-edit="/admin/edit/about" href="#">About</a></li>
+          <li><a class="dropdown-item load-page" data-url="/contact" data-edit="/admin/edit/contact" href="#">Contact Us</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li>
+            <form action="/admin/logout" method="POST" style="margin:0;">
+              <button type="submit" class="dropdown-item text-danger">Logout</button>
+            </form>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 
-  <!-- Topbar -->
-  <div class="topbar">
-    <h5>Welcome, Admin</h5>
+  <!-- Green Edit Button -->
+  <div class="edit-btn">
+    <button class="btn btn-success btn-lg" id="editPageBtn">Edit Page</button>
   </div>
 
   <!-- Content -->
   <div class="content">
-    <h2>Dashboard Overview</h2>
-    <div class="row mt-4">
-      <div class="col-md-4">
-        <div class="card p-3 shadow-sm">
-          <h5>Total Users</h5>
-          <p><strong>150</strong></p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card p-3 shadow-sm">
-          <h5>Active Sessions</h5>
-          <p><strong>32</strong></p>
-        </div>
-      </div>
-      <div class="col-md-4">
-        <div class="card p-3 shadow-sm">
-          <h5>Reports Pending</h5>
-          <p><strong>5</strong></p>
-        </div>
-      </div>
-    </div>
+    <h1>Admin Dashboard</h1>
+    <p>Select a page from the dropdown to load a copy here:</p>
 
-    <div class="mt-5">
-      <h4>Recent Activity</h4>
-      <ul class="list-group">
-        <li class="list-group-item">User JohnDoe reset password</li>
-        <li class="list-group-item">New user registered: Jane Smith</li>
-        <li class="list-group-item">Admin updated settings</li>
-      </ul>
-    </div>
+    <!-- iframe container -->
+    <iframe id="previewFrame" src=""></iframe>
   </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const previewFrame = document.getElementById('previewFrame');
+    const editBtnWrapper = document.querySelector('.edit-btn');
+    const editBtn = document.getElementById('editPageBtn');
+
+    let currentEditUrl = null;
+
+    // Load page into iframe when selected
+    document.querySelectorAll('.load-page').forEach(item => {
+      item.addEventListener('click', function (e) {
+        e.preventDefault();
+        const url = this.getAttribute('data-url');
+        currentEditUrl = this.getAttribute('data-edit');
+        previewFrame.src = url;
+
+        // Show the edit button once a page is loaded
+        editBtnWrapper.style.display = 'block';
+      });
+    });
+
+    // Redirect to edit page
+    editBtn.addEventListener('click', () => {
+      if (currentEditUrl) {
+        window.location.href = currentEditUrl;
+      }
+    });
+  </script>
 </body>
 </html>

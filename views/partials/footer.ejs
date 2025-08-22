@@ -1,20 +1,25 @@
-
 <link rel="stylesheet" href="/CSS/home_page.styles.css">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    
-    <!-- FontAwesome -->
+
+<!-- FontAwesome -->
 <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
 <footer class="footer">
-        <div class="footer-content text-center">
-            <h4>Hoffman's Reptile Shop</h4>
-            <p>2359 Concord Blvd, Concord, CA 94520</p>
-            <p>Phone: (925) 671-9106</p>
-            <p>Hours: Mon-Fri 12 PM - 6:30 PM | Sat 10 AM - 5 PM | Sun Closed</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook-f"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-            <p class="copyright">© 2025 Hoffman's Reptiles</p>
-        </div>
-    </footer>
+  <div class="footer-content text-center">
+    <h4><%= (pageData && pageData.footer && pageData.footer.title) ? pageData.footer.title : "Hoffman's Reptile Shop" %></h4>
+
+    <!-- Footer text is editable from admin and supports multiline -->
+    <p style="white-space: pre-line;">
+      <%= (pageData && pageData.footer && pageData.footer.text) 
+          ? pageData.footer.text 
+          : "2359 Concord Blvd, Concord, CA 94520\nPhone: (925) 671-9106\nHours: Mon-Fri 12 PM - 6:30 PM | Sat 10 AM - 5 PM | Sun Closed" %>
+    </p>
+
+    <div class="social-icons">
+      <a href="#"><i class="fab fa-facebook-f"></i></a>
+      <a href="#"><i class="fab fa-instagram"></i></a>
+    </div>
+
+    <p class="copyright">© <%= new Date().getFullYear() %> Hoffman's Reptiles</p>
+  </div>
+</footer>
