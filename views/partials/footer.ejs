@@ -6,13 +6,17 @@
 
 <footer class="footer">
   <div class="footer-content text-center">
-    <h4><%= (pageData && pageData.footer && pageData.footer.title) ? pageData.footer.title : "Hoffman's Reptile Shop" %></h4>
+    <h4>
+      <%= (typeof pageData !== 'undefined' && pageData && pageData.footer && pageData.footer.title) 
+            ? pageData.footer.title 
+            : "Hoffman's Reptile Shop" %>
+    </h4>
 
     <!-- Footer text is editable from admin and supports multiline -->
     <p style="white-space: pre-line;">
-      <%= (pageData && pageData.footer && pageData.footer.text) 
-          ? pageData.footer.text 
-          : "2359 Concord Blvd, Concord, CA 94520\nPhone: (925) 671-9106\nHours: Mon-Fri 12 PM - 6:30 PM | Sat 10 AM - 5 PM | Sun Closed" %>
+      <%= (typeof pageData !== 'undefined' && pageData && pageData.footer && pageData.footer.text) 
+            ? pageData.footer.text 
+            : "2359 Concord Blvd, Concord, CA 94520\nPhone: (925) 671-9106\nHours: Mon-Fri 12 PM - 6:30 PM | Sat 10 AM - 5 PM | Sun Closed" %>
     </p>
 
     <div class="social-icons">
