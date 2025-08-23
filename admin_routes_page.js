@@ -48,7 +48,7 @@ router.post('/home/carousel', upload.single('imageFile'), async (req, res) => {
     };
     doc.carousel.push(newSlide);
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Slide added');
+    res.redirect('/admin/edit/home?msg=Slide added#section-carousel');
   } catch (err) {
     console.error('❌ Add slide error:', err);
     res.status(500).send('Error adding slide');
@@ -73,7 +73,7 @@ router.put('/home/carousel/:index', upload.single('imageFile'), async (req, res)
     }
 
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Slide updated');
+    res.redirect('/admin/edit/home?msg=Slide updated#section-carousel');
   } catch (err) {
     console.error('❌ Update slide error:', err);
     res.status(500).send('Error updating slide');
@@ -91,7 +91,7 @@ router.delete('/home/carousel/:index', async (req, res) => {
       doc.carousel.splice(index, 1);
       await doc.save();
     }
-    res.redirect('/admin/edit/home?msg=Slide deleted');
+    res.redirect('/admin/edit/home?msg=Slide deleted#section-carousel');
   } catch (err) {
     console.error('❌ Delete slide error:', err);
     res.status(500).send('Error deleting slide');
@@ -106,7 +106,7 @@ router.put('/home/info', async (req, res) => {
     doc.info.headline = req.body.headline?.trim() || null;
     doc.info.text = req.body.text?.trim() || null;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Info updated');
+    res.redirect('/admin/edit/home?msg=Info updated#section-info');
   } catch (err) {
     console.error('❌ Info update error:', err);
     res.status(500).send('Error updating info section');
@@ -122,7 +122,7 @@ router.put('/home/split/image', upload.single('imageFile'), async (req, res) => 
     if (!doc) return res.status(404).send('Home page doc not found');
     if (req.file) doc.split.image = '/uploads/' + req.file.filename;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Split image updated');
+    res.redirect('/admin/edit/home?msg=Split image updated#section-split');
   } catch (err) {
     console.error('❌ Split image error:', err);
     res.status(500).send('Error updating split image');
@@ -137,21 +137,21 @@ router.put('/home/split/text', async (req, res) => {
     doc.split.title = req.body.title?.trim() || null;
     doc.split.text = req.body.text?.trim() || null;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Split text updated');
+    res.redirect('/admin/edit/home?msg=Split text updated#section-split');
   } catch (err) {
     console.error('❌ Split text error:', err);
     res.status(500).send('Error updating split text');
   }
 });
 
-/* ---------------- MID SECTION (NEW) ---------------- */
+/* ---------------- MID SECTION ---------------- */
 router.put('/home/mid', async (req, res) => {
   try {
     const doc = await AdminHomePage.findOne({});
     if (!doc) return res.status(404).send('Home page doc not found');
     doc.mid.text = req.body.text?.trim() || null;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Mid section updated');
+    res.redirect('/admin/edit/home?msg=Mid section updated#section-mid');
   } catch (err) {
     console.error('❌ Mid section error:', err);
     res.status(500).send('Error updating mid section');
@@ -172,7 +172,7 @@ router.post('/home/grid', upload.single('imageFile'), async (req, res) => {
       doc.grid.images.push('/uploads/' + req.file.filename);
       await doc.save();
     }
-    res.redirect('/admin/edit/home?msg=Grid image added');
+    res.redirect('/admin/edit/home?msg=Grid image added#section-grid-images');
   } catch (err) {
     console.error('❌ Grid add error:', err);
     res.status(500).send('Error adding grid image');
@@ -191,7 +191,7 @@ router.put('/home/grid/:index', upload.single('imageFile'), async (req, res) => 
       doc.grid.images[index] = '/uploads/' + req.file.filename;
       await doc.save();
     }
-    res.redirect('/admin/edit/home?msg=Grid image updated');
+    res.redirect('/admin/edit/home?msg=Grid image updated#section-grid-images');
   } catch (err) {
     console.error('❌ Grid image error:', err);
     res.status(500).send('Error updating grid image');
@@ -209,7 +209,7 @@ router.delete('/home/grid/:index', async (req, res) => {
       doc.grid.images.splice(index, 1);
       await doc.save();
     }
-    res.redirect('/admin/edit/home?msg=Grid image deleted');
+    res.redirect('/admin/edit/home?msg=Grid image deleted#section-grid-images');
   } catch (err) {
     console.error('❌ Grid delete error:', err);
     res.status(500).send('Error deleting grid image');
@@ -225,7 +225,7 @@ router.put('/home/grid-header', async (req, res) => {
     doc.grid.title = req.body.title?.trim() || null;
     doc.grid.subtitle = req.body.subtitle?.trim() || null;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Grid header updated');
+    res.redirect('/admin/edit/home?msg=Grid header updated#section-grid');
   } catch (err) {
     console.error('❌ Grid header error:', err);
     res.status(500).send('Error updating grid header');
@@ -240,7 +240,7 @@ router.put('/home/footer', async (req, res) => {
     doc.footer.title = req.body.title?.trim() || null;
     doc.footer.text = req.body.text?.trim() || null;
     await doc.save();
-    res.redirect('/admin/edit/home?msg=Footer updated');
+    res.redirect('/admin/edit/home?msg=Footer updated#section-footer');
   } catch (err) {
     console.error('❌ Footer error:', err);
     res.status(500).send('Error updating footer');

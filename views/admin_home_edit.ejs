@@ -37,7 +37,7 @@
     <% } %>
 
     <!-- ========== CAROUSEL ========== -->
-    <div class="card mb-4">
+    <div class="card mb-4" id="section-carousel">
       <div class="card-header section-heading">
         <div>
           <strong>Carousel</strong>
@@ -70,7 +70,7 @@
                     <button class="btn btn-outline-primary btn-sm">Save</button>
                   </form>
 
-                  <!-- Description (mapped to schema.description in the route) -->
+                  <!-- Description -->
                   <form action="/admin/home/carousel/<%= i %>?_method=PUT" method="POST" class="mb-3 d-flex gap-2">
                     <input type="hidden" name="__edit" value="textOnly">
                     <textarea class="form-control" name="subtitle" rows="3" style="resize: vertical;" placeholder="Slide description…"><%= s.description || '' %></textarea>
@@ -111,7 +111,7 @@
     </div>
 
     <!-- ========== INFO SECTION ========== -->
-    <div class="card mb-4">
+    <div class="card mb-4" id="section-info">
       <div class="card-header section-heading">
         <strong>Info Section</strong>
         <span class="muted">Headline + paragraph under the carousel</span>
@@ -135,7 +135,7 @@
     </div>
 
     <!-- ========== SPLIT SECTION ========== -->
-    <div class="card mb-4">
+    <div class="card mb-4" id="section-split">
       <div class="card-header section-heading">
         <strong>Split Section</strong>
         <span class="muted">Large image at left, title + paragraph at right</span>
@@ -171,14 +171,13 @@
       </div>
     </div>
 
-    <!-- ========== MID SECTION (NEW) ========== -->
-    <div class="card mb-4">
+    <!-- ========== MID SECTION ========== -->
+    <div class="card mb-4" id="section-mid">
       <div class="card-header section-heading">
         <strong>Mid Section</strong>
         <span class="muted">Optional text between Split and Grid</span>
       </div>
       <div class="card-body">
-        <!-- Update Mid -->
         <form action="/admin/home/mid?_method=PUT" method="POST" class="mb-3">
           <div class="mb-3">
             <label class="form-label">Text</label>
@@ -188,7 +187,6 @@
           <button class="btn btn-success">Save Mid Section</button>
         </form>
 
-        <!-- Delete Mid (only shows if there is text) -->
         <% if (pageData?.mid?.text) { %>
           <form action="/admin/home/mid?_method=PUT" method="POST" onsubmit="return confirm('Clear the mid section text?');">
             <input type="hidden" name="text" value="">
@@ -198,14 +196,41 @@
       </div>
     </div>
 
-    <!-- ========== GRID SECTION ========== -->
-    <div class="card mb-4">
+    <!-- ========== GRID HEADER ========== -->
+    <div class="card mb-4" id="section-grid">
+      <div class="card-header section-heading">
+        <strong>Grid Header</strong>
+        <span class="muted">Controls the title and subtitle above the grid on the public homepage.</span>
+      </div>
+      <div class="card-body">
+        <form class="row g-3" action="/admin/home/grid-header?_method=PUT" method="POST">
+          <div class="col-12">
+            <label class="form-label">Grid Title</label>
+            <input class="form-control" type="text" name="title"
+                   value="<%= pageData?.grid?.title || '' %>"
+                   placeholder="A sample of our animals">
+            <div class="form-help">Example: “A sample of our animals”</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label">Grid Subtitle</label>
+            <textarea class="form-control" name="subtitle" rows="3"
+                      placeholder="Changes weekly. Please visit our store to see what is in stock."><%= pageData?.grid?.subtitle || '' %></textarea>
+            <div class="form-help">Example: “Changes weekly. Please visit our store to see what is in stock.”</div>
+          </div>
+          <div class="col-12">
+            <button class="btn btn-success">Save Grid Header</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- ========== GRID IMAGES ========== -->
+    <div class="card mb-4" id="section-grid-images">
       <div class="card-header section-heading">
         <strong>Image Grid (<%= pageData?.grid?.images?.length || 0 %>+)</strong>
         <span class="muted">Replace any thumbnail, add new ones, or delete.</span>
       </div>
       <div class="card-body">
-        <!-- Add new grid image -->
         <form class="d-flex gap-2 mb-4" action="/admin/home/grid?_method=POST" method="POST" enctype="multipart/form-data">
           <div class="flex-grow-1">
             <label class="form-label mb-1">Add Grid Image</label>
@@ -234,13 +259,11 @@
                     <img class="grid-thumb" src="<%= src %>" alt="grid <%= i+1 %>">
                   </div>
 
-                  <!-- Replace -->
                   <form action="/admin/home/grid/<%= i %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mb-2">
                     <input class="form-control mb-2" type="file" accept="image/*" name="imageFile">
                     <button class="btn btn-primary w-100 btn-sm">Replace</button>
                   </form>
 
-                  <!-- Delete -->
                   <form action="/admin/home/grid/<%= i %>?_method=DELETE" method="POST" onsubmit="return confirm('Delete grid image #<%= i+1 %>?');">
                     <button class="btn btn-danger w-100 btn-sm">Delete</button>
                   </form>
@@ -254,7 +277,7 @@
     </div>
 
     <!-- ========== FOOTER ========== -->
-    <div class="card mb-5">
+    <div class="card mb-5" id="section-footer">
       <div class="card-header section-heading">
         <strong>Footer</strong>
       </div>
@@ -281,6 +304,38 @@
       <a href="/home" class="btn btn-outline-primary" target="_blank">Preview Public Page</a>
     </div>
   </div>
+
+  <!-- Keep scroll position after Save/Delete -->
+  <script>
+  (function () {
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    const KEY = 'adminHome.scrollY';
+
+    document.addEventListener('submit', function (e) {
+      if (e.target && e.target.tagName === 'FORM') {
+        sessionStorage.setItem(KEY, String(window.scrollY));
+      }
+    }, true);
+
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('button, input[type="submit"]');
+      if (!btn) return;
+      const form = btn.form || btn.closest('form');
+      if (form) sessionStorage.setItem(KEY, String(window.scrollY));
+    }, true);
+
+    const saved = sessionStorage.getItem(KEY);
+    if (saved !== null) {
+      window.scrollTo(0, parseInt(saved, 10) || 0);
+      sessionStorage.removeItem(KEY);
+    }
+
+    if (location.hash) {
+      const el = document.getElementById(location.hash.slice(1));
+      if (el) el.scrollIntoView({ behavior: 'instant', block: 'start' });
+    }
+  })();
+  </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
