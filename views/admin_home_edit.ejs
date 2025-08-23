@@ -10,10 +10,7 @@
 
   <!-- Inline utility/layout tweaks (these will be overridden by admin_edit.css if needed) -->
   <style>
-    body { background:#040404; 
-    
-    
-    }
+    body { background:#040404; }
     .wrap { max-width:1100px; margin:32px auto; }
     .card { border-radius:12px; box-shadow:0 6px 18px rgba(0,0,0,.06); }
     .thumb { width:180px; height:120px; object-fit:cover; border-radius:8px; border:1px solid rgba(0,0,0,.08); }
@@ -23,6 +20,16 @@
     .sticky-actions { position: sticky; top: 0; padding: 12px 0; z-index: 5; background: linear-gradient(#f8f9fa, #f8f9fa); }
     .form-help { font-size:.85rem; color:#6c757d; }
     .empty { border:1px dashed #cfd4da; background:#fff; border-radius:10px; padding:18px; }
+
+    /* ====== Grid Header centering + spacing (requested) ====== */
+    #section-grid { margin-top: 24px; }                 /* push section down a bit */
+    #section-grid .card-header {
+      text-align: center;                               /* center title/subtitle text */
+      padding: 2rem 1rem 1.25rem;                       /* generous spacing so nothing overlaps */
+    }
+    #section-grid .card-body { padding-top: 0.75rem; }
+    #section-grid strong { display:block; font-size:1.35rem; color:#28a745; margin-bottom:.35rem; }
+    #section-grid .muted { display:block; margin:0 auto .25rem; }
   </style>
 
   <!-- Put admin_edit.css LAST so its rules (e.g., the animated gradient) win -->
