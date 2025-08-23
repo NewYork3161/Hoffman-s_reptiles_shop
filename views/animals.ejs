@@ -28,8 +28,6 @@
       padding-top: 76px;
     }
 
-    /* Navbar */
-    
     /* Hero image */
     .hero { width: 100%; overflow: hidden; margin-bottom: 30px; }
     .hero img { width: 100%; height: 1000px; display: block; object-fit: cover; }
@@ -57,18 +55,21 @@
     .welcome-box h2 { color: var(--green); margin-bottom: 10px; }
     .welcome-box p { color:#fff; }
 
-    /* Single item layout */
+    /* Grid layout */
     .animal-list {
       display: grid;
-      grid-template-columns: minmax(300px, 500px);
-      justify-content: center;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 20px;
       margin-top: 15px;
     }
+    @media (max-width: 1200px) { .animal-list { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 900px)  { .animal-list { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 560px)  { .animal-list { grid-template-columns: 1fr; } }
+
     .animal-box {
       display:flex;
       flex-direction: column;
-      align-items:center;
+      align-items:stretch;
       background:rgba(0,0,0,0.7);
       color:var(--green);
       padding:10px;
@@ -76,26 +77,50 @@
       border-radius:6px;
       text-decoration:none;
       transition: background .2s ease;
+      min-height: 100%;
     }
     .animal-box:hover { background:rgba(0,0,0,0.9); }
+    .animal-name {
+      font-size:1.1rem;
+      font-weight:700;
+      margin: 2px 2px 8px;
+      color:var(--green);
+      text-align:center;
+    }
     .animal-box img {
       width: 100%;
-      height: 300px;
+      height: 240px;
       object-fit:cover;
       border-radius:4px;
+      background:#000;
     }
-    .animal-name { font-size:1.2rem; font-weight:700; margin-top: 8px; color:var(--green); }
-
-    /* Footer */
-    
+    .animal-meta {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      padding:8px 2px 2px;
+    }
+    .price { color:#e6ffe6; font-weight:700; }
+    .avail { font-size:.85rem; padding:4px 8px; border-radius:999px; }
+    .avail.yes { background: rgba(0, 128, 0, .25); color:#b7ffb7; border:1px solid rgba(0,128,0,.35); }
+    .avail.no  { background: rgba(128, 0, 0, .25); color:#ffb7b7; border:1px solid rgba(128,0,0,.35); }
   </style>
 </head>
 <body>
   <!-- Sticky Navbar -->
-    <%- include('partials/navbar') %>
+  <%- include('partials/navbar') %>
+
+  <%
+    // Pull values from pageData with safe fallbacks
+    const hero    = (typeof pageData !== 'undefined' && pageData && pageData.heroUrl) ? pageData.heroUrl : '/Images/hero_animal_page.png';
+    const welcome = (typeof pageData !== 'undefined' && pageData && pageData.welcomeText) ? pageData.welcomeText : "Welcome to Hoffman's Reptiles!";
+    const items   = (typeof pageData !== 'undefined' && pageData && Array.isArray(pageData.animals)) ? pageData.animals : [];
+  %>
+
   <!-- Hero Image -->
   <div class="hero">
-    <img src="/Images/hero_animal_page.png" alt="Hero Animal Page" />
+    <img src="<%= hero %>" alt="Animals Hero" />
   </div>
 
   <!-- Content -->
@@ -105,20 +130,34 @@
       <!-- Welcome Box -->
       <div class="welcome-box">
         <h2>Welcome to Hoffman's Reptiles</h2>
-        <p>
-          At Hoffman's Reptiles, we pride ourselves on providing a wide variety of healthy and fascinating animals.
-          From colorful lizards to powerful snakes, gentle turtles, and exotic species rarely found in stores,
-          our goal is to connect reptile enthusiasts with the perfect companion. Every animal we offer is carefully
-          cared for and comes with expert guidance to help you succeed in your reptile journey.
-        </p>
+        <p><%= welcome %></p>
       </div>
 
-      <!-- Animal List -->
+      <!-- Animal Grid (name on top, image, price + availability) -->
       <div class="animal-list">
-        <a href="/lizards" class="animal-box">
-          <img src="/Images/lizards.png" alt="Lizards" />
-          <span class="animal-name">Lizards</span>
-        </a>
+        <% if (items.length === 0) { %>
+          <div class="animal-box">
+            <div class="animal-name">Inventory updating...</div>
+            <img src="/Images/placeholder.png" alt="Coming soon">
+            <div class="animal-meta">
+              <span class="price">$—</span>
+              <span class="avail no">Not Available</span>
+            </div>
+          </div>
+        <% } else { %>
+          <% items.forEach(a => { %>
+            <div class="animal-box">
+              <div class="animal-name"><%= a.name || 'Unnamed' %></div>
+              <img src="<%= a.image %>" alt="<%= a.name || 'Animal' %>">
+              <div class="animal-meta">
+                <span class="price"><%= a.price ? ('$' + a.price) : '$—' %></span>
+                <span class="avail <%= a.available ? 'yes' : 'no' %>">
+                  <%= a.available ? 'Available' : 'Not Available' %>
+                </span>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
       </div>
 
     </div>

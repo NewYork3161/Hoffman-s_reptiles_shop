@@ -41,6 +41,14 @@ try {
   console.warn('⚠️ Could not load ./models/Admin_Home_Page. Make sure the file exists and the name matches.');
 }
 
+// 👇 Add the Animals page model so the public /animals route can read from DB
+let AdminAnimalsPage;
+try {
+  AdminAnimalsPage = require('./models/Admin_Animals_Page');
+} catch (e) {
+  console.warn('⚠️ Could not load ./models/Admin_Animals_Page. Make sure the file exists and the name matches.');
+}
+
 /* ---------------- VIEW ENGINE ---------------- */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -103,14 +111,31 @@ app.get('/home', async (req, res) => {
   }
 });
 
-// Animals Page
-app.get('/animals', (req, res) => {
-  res.render('animals', {
-    title: 'Animals',
-    metaDescription:
-      'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
-    metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
-  });
+// Animals Page (PUBLIC) — now reads from DB
+app.get('/animals', async (req, res) => {
+  try {
+    let page = null;
+    if (AdminAnimalsPage) {
+      page = await AdminAnimalsPage.findOne({}).lean();
+    }
+
+    res.render('animals', {
+      title: 'Animals',
+      metaDescription:
+        'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
+      metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
+      pageData: page || { heroUrl: '', welcomeText: '', animals: [], footer: { title: '', text: '' } }
+    });
+  } catch (err) {
+    console.error('❌ Error loading /animals:', err);
+    res.render('animals', {
+      title: 'Animals',
+      metaDescription:
+        'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
+      metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
+      pageData: { heroUrl: '', welcomeText: '', animals: [], footer: { title: '', text: '' } }
+    });
+  }
 });
 
 // Lizards Page
@@ -224,9 +249,13 @@ app.use('/admin', adminRouter);
 const adminRoutesPage = require('./admin_routes_page');
 app.use('/admin', adminRoutesPage);
 
-// admin home editor routes (point to same file since that’s the one you have)
+// admin home editor routes
 const adminHomeRoutes = require('./admin_routes_page');
 app.use('/admin', adminHomeRoutes);
+
+// ✅ admin animals editor routes
+const adminAnimalsRoutes = require('./admin_animals_routes_page');
+app.use('/admin', adminAnimalsRoutes);
 
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));
