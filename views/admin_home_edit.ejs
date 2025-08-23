@@ -314,6 +314,75 @@
     </div>
   </div>
 
+  <!-- Live image preview for all image file inputs (no CSS changes; inline styles only) -->
+  <script>
+    (function () {
+      function ensurePreviewBox(afterNode) {
+        let box = afterNode.nextElementSibling;
+        if (!box || !box.classList || !box.classList.contains('js-img-preview')) {
+          box = document.createElement('div');
+          box.className = 'js-img-preview';
+          box.style.marginTop = '8px';
+          box.style.display = 'inline-flex';
+          box.style.alignItems = 'center';
+          box.style.gap = '10px';
+          box.style.padding = '8px';
+          box.style.border = '1px dashed #cfd4da';
+          box.style.borderRadius = '8px';
+          box.style.background = '#fff';
+
+          const img = document.createElement('img');
+          img.alt = 'Selected preview';
+          img.style.width = '180px';
+          img.style.height = '120px';
+          img.style.objectFit = 'cover';
+          img.style.borderRadius = '8px';
+          img.style.border = '1px solid rgba(0,0,0,.08)';
+
+          const note = document.createElement('small');
+          note.textContent = 'Preview (not uploaded yet)';
+          note.style.color = '#6c757d';
+
+          box.appendChild(img);
+          box.appendChild(note);
+          afterNode.parentNode.insertBefore(box, afterNode.nextSibling);
+        }
+        return box;
+      }
+
+      function showPreviewForInput(input) {
+        const file = input.files && input.files[0];
+        const isImageInput =
+          input.type === 'file' &&
+          (input.getAttribute('accept') || '').toLowerCase().includes('image');
+        if (!isImageInput) return;
+
+        const box = ensurePreviewBox(input);
+        const img = box.querySelector('img');
+
+        if (file) {
+          const url = URL.createObjectURL(file);
+          img.src = url;
+          img.onload = () => URL.revokeObjectURL(url);
+          box.style.display = 'inline-flex';
+        } else {
+          img.removeAttribute('src');
+          box.style.display = 'none';
+        }
+      }
+
+      document.addEventListener('change', function (e) {
+        const input = e.target;
+        if (input.matches('input[type="file"][accept*="image"]')) {
+          showPreviewForInput(input);
+        }
+      });
+
+      // Initialize previews if needed
+      document.querySelectorAll('input[type="file"][accept*="image"]').forEach(showPreviewForInput);
+    })();
+  </script>
+
   <!-- Keep scroll position after Save/Delete -->
   <script>
   (function () {
