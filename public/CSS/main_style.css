@@ -1,0 +1,105 @@
+/* ===== Animated Dark Green + Black Background ===== */
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(-45deg, #000000, #013220, #000000, #025c1c);
+  background-size: 400% 400%;
+  animation: gradientShift 6s linear infinite;
+  font-family: Arial, Helvetica, sans-serif;
+  color: #f8f9fa;
+}
+
+@keyframes gradientShift {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* ===== Shared Admin Styles ===== */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,.6);
+  background: rgba(20, 20, 20, 0.85); /* transparent so gradient shows faintly */
+  color: #f1f1f1;
+}
+
+.card-header {
+  background: rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid #025c1c;
+  color: #8fdf8f;
+}
+
+.btn-success {
+  background-color: #025c1c;
+  border-color: #013220;
+}
+.btn-success:hover {
+  background-color: #037d27;
+  border-color: #025c1c;
+}
+
+.btn-outline-primary {
+  color: #8fdf8f;
+  border-color: #8fdf8f;
+}
+.btn-outline-primary:hover {
+  background-color: #8fdf8f;
+  color: #000;
+}
+
+.form-control {
+  background-color: #111;
+  border: 1px solid #444;
+  color: #f8f9fa;
+}
+.form-control:focus {
+  background-color: #111;
+  border-color: #037d27;
+  color: #fff;
+  box-shadow: 0 0 0 0.25rem rgba(3, 125, 39, 0.25);
+}
+
+.muted {
+  color: #bbb !important;
+}
+
+/* ===== Navbar Styling ===== */
+.navbar {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+.navbar-brand,
+.navbar .nav-link,
+.navbar .dropdown-toggle {
+  color: #8fdf8f !important;
+}
+.navbar .nav-link:hover,
+.navbar .dropdown-item:hover {
+  background-color: #025c1c;
+  color: #fff !important;
+}
+
+/* ===== Sticky Action Bar ===== */
+.sticky-actions {
+  background: rgba(0, 0, 0, 0.8);
+  border-bottom: 1px solid #025c1c;
+}
+
+/* ===== Forms and Labels ===== */
+label.form-label {
+  color: #8fdf8f;
+  font-weight: bold;
+}
+
+textarea.form-control {
+  resize: vertical;
+}
+
+/* ===== Footer Buttons (Preview / Back) ===== */
+.text-center .btn-outline-primary {
+  border-color: #8fdf8f;
+  color: #8fdf8f;
+}
+.text-center .btn-outline-primary:hover {
+  background-color: #8fdf8f;
+  color: #000;
+}
