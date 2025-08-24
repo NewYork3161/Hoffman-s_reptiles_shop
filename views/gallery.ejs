@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Photo gallery of reptiles and exotic animals at Hoffman's Reptile Shop." />
+  <meta name="keywords" content="reptile gallery, lizards, snakes, tortoises, turtles, exotic pets Bay Area" />
+  <title><%= title || "Gallery - Hoffman's Reptile Shop" %></title>
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="/CSS/home_page.styles.css" />
+  <style>
+    :root { --green:#0a4e07; --bg:#000; --card:#111; }
+    * { box-sizing:border-box; }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+    body {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      color: var(--green);
+      font-family: Arial, Helvetica, sans-serif;
+      padding-top: 76px; /* leave space for fixed navbar */
+    }
+    main {
+      flex: 1;
+    }
+
+    .content-box { 
+      background: rgba(0,0,0,0.6); 
+      padding: 20px; 
+      margin-top: 40px;  /* ⬅ added more gap from nav */
+      border-radius: 8px; 
+    }
+    .info { 
+      max-width:900px; 
+      margin: 0 auto 20px; 
+      text-align: center; 
+    }
+    .info h2 { 
+      color: var(--green);
+      font-size: 2.5rem; 
+      font-weight: bold; 
+      margin-bottom: 15px; 
+    }
+    .info p { 
+      color: var(--green); 
+      font-size: 1.25rem; 
+      margin-bottom: 20px;
+    }
+    .grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:20px; margin-top:15px; }
+    @media (max-width:1200px){ .grid{ grid-template-columns: repeat(3,1fr); } }
+    @media (max-width:900px) { .grid{ grid-template-columns: repeat(2,1fr); } }
+    @media (max-width:560px) { .grid{ grid-template-columns: 1fr; } }
+    .tile { background:rgba(0,0,0,0.7); border-radius:6px; overflow:hidden; box-shadow:0 6px 16px rgba(0,0,0,.25); }
+    .tile img { width:100%; height:240px; object-fit:cover; display:block; background:#000; transition: transform .25s ease; }
+    .tile img:hover { transform:scale(1.03); }
+  </style>
+</head>
+<body>
+  <%- include('partials/navbar') %>
+
+  <main>
+    <%
+      const p = (typeof pageData !== 'undefined' && pageData) ? pageData : {};
+      const infoTitle = (p.info && p.info.title) ? p.info.title : 'Gallery';
+      const infoText  = (p.info && p.info.text) ? p.info.text : 'A look at some of our reptiles and animals. Visit our shop for the full collection.';
+      const images    = Array.isArray(p.images) ? p.images : [];
+    %>
+
+    <!-- INFO AT TOP -->
+    <div class="container">
+      <div class="content-box">
+        <div class="info">
+          <h2><%= infoTitle %></h2>
+          <p><%= infoText %></p>
+        </div>
+
+        <% if (!images.length) { %>
+          <div class="text-center text-muted py-5">No gallery images available right now.</div>
+        <% } else { %>
+          <div class="grid">
+            <% images.forEach((src, i) => { %>
+              <div class="tile">
+                <img src="<%= src %>?v=<%= Date.now() %>" alt="Gallery image <%= i+1 %>">
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </main>
+
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

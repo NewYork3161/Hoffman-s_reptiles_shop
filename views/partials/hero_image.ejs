@@ -1,0 +1,40 @@
+<div class="card mb-4" id="section-hero">
+  <div class="card-header section-heading">
+    <strong>Hero Section</strong>
+    <span class="muted">Image + Title + Subtitle</span>
+  </div>
+  <div class="card-body">
+    <% if (pageData && pageData.heroUrl) { %>
+      <img class="hero-preview mb-3"
+           src="<%= pageData.heroUrl %>?v=<%= Date.now() %>"
+           alt="Current hero">
+    <% } %>
+
+    <!-- Replace Hero Image -->
+    <form action="/admin/gallery/hero?_method=PUT"
+          method="POST"
+          enctype="multipart/form-data"
+          class="mb-3">
+      <label class="form-label">Replace Hero Image</label>
+      <input class="form-control" type="file" accept="image/*" name="imageFile">
+      <button class="btn btn-primary mt-2" type="submit">Replace Hero</button>
+    </form>
+
+    <!-- Hero Text -->
+    <form action="/admin/gallery/hero-text?_method=PUT"
+          method="POST"
+          class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Hero Title</label>
+        <input class="form-control" type="text" name="heroTitle" value="<%= pageData.heroTitle || '' %>">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Hero Subtitle</label>
+        <input class="form-control" type="text" name="heroSubtitle" value="<%= pageData.heroSubtitle || '' %>">
+      </div>
+      <div class="col-12">
+        <button class="btn btn-success" type="submit">Save Hero Text</button>
+      </div>
+    </form>
+  </div>
+</div>

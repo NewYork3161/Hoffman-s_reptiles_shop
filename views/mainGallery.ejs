@@ -1,132 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Gallery - Hoffman's Reptile Shop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || "Gallery - Hoffman's Reptile Shop" %></title>
 
-    <link rel="icon" type="image/png" href="/Images/Logo.png" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 
-    <style>
-        body {
-            background-color: #000; /* Black background */
-            color: #28a745; /* Green text */
-        }
+  <style>
+    body { background:#000; color:#28a745; }
 
-        /* Navbar */
-        .navbar {
-            background-color: #fff !important; /* White navbar */
-        }
-        .navbar .nav-link,
-        .navbar .navbar-brand span {
-            color: #28a745 !important;
-            font-weight: bold;
-        }
-        .navbar .nav-link:hover {
-            text-decoration: underline;
-        }
+    /* Navbar */
+    .navbar { background:#fff !important; }
+    .navbar .nav-link, .navbar .navbar-brand span { color:#28a745 !important; font-weight:bold; }
+    .navbar .nav-link:hover { text-decoration:underline; }
 
-        /* Hero Section */
-        .hero {
-            width: 100%;
-            height: 60vh;
-            background: url('/Images/hero_image_gallery.png') no-repeat center center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-        }
-        .hero h1, .hero p {
-            color: #28a745; /* Green text */
-            text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
-        }
+    /* Hero */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      background:#111;
+    }
+    .hero img {
+      position:absolute; inset:0;
+      width:100%; height:100%; object-fit:cover;
+      z-index:-1;
+    }
+    .hero h1, .hero p { color:#28a745; text-shadow:2px 2px 10px rgba(0,0,0,.8); }
 
-        /* Info Section */
-        .info-section {
-            padding: 40px 20px;
-            color: #28a745;
-        }
+    /* Info */
+    .info-section { padding:40px 20px; color:#28a745; }
 
-        /* Image Grid (4 top, 4 bottom) */
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            padding: 20px;
-            justify-items: center;
-        }
-        .image-grid img {
-            width: 100%;
-            max-width: 350px;
-            height: 250px; /* lock size */
-            object-fit: cover;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.6);
-            transition: transform 0.3s ease;
-        }
-        .image-grid img:hover {
-            transform: scale(1.05);
-        }
+    /* Grid */
+    .image-grid {
+      display:grid; grid-template-columns:repeat(4, 1fr);
+      gap:20px; padding:20px; justify-items:center;
+    }
+    .image-grid img {
+      width:100%; max-width:350px; height:250px; object-fit:cover;
+      border-radius:8px; box-shadow:0 4px 8px rgba(0,0,0,.6);
+      transition:transform .3s ease;
+    }
+    .image-grid img:hover { transform:scale(1.05); }
 
-        /* Footer */
-        .footer {
-            background: #28a745; /* Green footer */
-            color: #000; /* Black text on footer */
-            padding: 20px 0;
-        }
-        .footer h4,
-        .footer p {
-            margin: 5px 0;
-            font-weight: bold;
-        }
-        .footer .social-icons a {
-            color: #000;
-            margin: 0 10px;
-            font-size: 1.2rem;
-        }
-        .footer .social-icons a:hover {
-            color: #fff;
-        }
-    </style>
+    /* Footer */
+    .footer { background:#28a745; color:#000; padding:20px 0; text-align:center; }
+    .footer h4, .footer p { margin:5px 0; font-weight:bold; }
+  </style>
 </head>
 <body>
-    <!-- Navbar -->
-      <%- include('partials/navbar') %>
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
 
-    <!-- Hero Image -->
-    <section class="hero">
-        <div>
-            <h1>Our Gallery</h1>
-            <p>Explore the beauty of our reptiles and animals</p>
-        </div>
-    </section>
+  <!-- Hero -->
+  <section class="hero">
+    <% const heroImg = pageData?.hero?.image || pageData?.heroUrl; %>
+    <% if (heroImg) { %>
+      <img src="<%= heroImg %>" alt="Gallery hero">
+    <% } %>
+    <div>
+      <h1><%= pageData?.hero?.title || pageData?.heroTitle || "Our Gallery" %></h1>
+      <p><%= pageData?.hero?.subtitle || pageData?.heroSubtitle || "Explore the beauty of our reptiles and animals" %></p>
+    </div>
+  </section>
 
-    <!-- Gallery Header -->
-    <section class="info-section text-center" style="margin-top:40px;">
-        <h2>Gallery</h2>
-        <p>A look at some of our reptiles and animals. Visit our shop for the full collection.</p>
-    </section>
+  <!-- Info -->
+  <section class="info-section text-center">
+    <h2><%= pageData?.info?.title || pageData?.introTitle || "Gallery" %></h2>
+    <p><%= pageData?.info?.text || pageData?.introText || "A look at some of our reptiles and animals. Visit our shop for the full collection." %></p>
+  </section>
 
-    <!-- Image Grid -->
-    <section class="image-grid-section">
-        <div class="image-grid">
-            <img src="/Images/1.png" alt="Animal 1" />
-            <img src="/Images/2.png" alt="Animal 2" />
-            <img src="/Images/3.png" alt="Animal 3" />
-            <img src="/Images/baby_blue_iguana.png" alt="Animal 4" />
-            <img src="/Images/chubby_frog.png" alt="Animal 5" />
-            <img src="/Images/6.png" alt="Animal 6" />
-            <img src="/Images/7.png" alt="Animal 7" />
-            <img src="/Images/asian_water_monitor_baby.png" alt="Animal 8" />
-        </div>
-    </section>
+  <!-- Image Grid -->
+  <section class="image-grid-section">
+    <div class="image-grid">
+      <% if (Array.isArray(pageData?.images) && pageData.images.length) { %>
+        <% pageData.images.forEach((src, i) => { %>
+          <img src="<%= src %>" alt="Gallery image <%= i+1 %>">
+        <% }) %>
+      <% } else if (Array.isArray(pageData?.grid) && pageData.grid.length) { %>
+        <% pageData.grid.forEach((src, i) => { %>
+          <img src="<%= src %>" alt="Gallery image <%= i+1 %>">
+        <% }) %>
+      <% } else { %>
+        <p class="text-center text-muted">No gallery images available right now.</p>
+      <% } %>
+    </div>
+  </section>
 
-    <!-- Footer -->
-    <%- include('partials/footer') %>
+  <!-- Footer -->
+  <footer class="footer">
+    <h4><%= pageData?.footer?.title || "Hoffman's Reptiles" %></h4>
+    <p><%= pageData?.footer?.text || "2359 Concord Blvd, Concord, CA 94520" %></p>
+  </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

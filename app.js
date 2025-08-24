@@ -41,12 +41,18 @@ try {
   console.warn('⚠️ Could not load ./models/Admin_Home_Page. Make sure the file exists and the name matches.');
 }
 
-// 👇 Add the Animals page model so the public /animals route can read from DB
 let AdminAnimalsPage;
 try {
   AdminAnimalsPage = require('./models/Admin_Animals_Page');
 } catch (e) {
   console.warn('⚠️ Could not load ./models/Admin_Animals_Page. Make sure the file exists and the name matches.');
+}
+
+let AdminGalleryPage;
+try {
+  AdminGalleryPage = require('./models/Admin_Gallery_Page');
+} catch (e) {
+  console.warn('⚠️ Could not load ./models/Admin_Gallery_Page. Make sure the file exists and the name matches.');
 }
 
 /* ---------------- VIEW ENGINE ---------------- */
@@ -55,12 +61,12 @@ app.set('views', path.join(__dirname, 'views'));
 
 /* ---------------- STATIC ---------------- */
 app.use(express.static(path.join(__dirname, 'public')));
+// (Explicit mapping; harmless if also served by the line above)
+app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
-/* ---------------- BODY PARSING ---------------- */
-app.use(bodyParser.urlencoded({ extended: false }));
+/* ---------------- BODY PARSING + METHOD OVERRIDE ---------------- */
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
-
-/* ---------------- METHOD OVERRIDE ---------------- */
 app.use(methodOverride('_method'));
 
 /* ---------------- SESSIONS ---------------- */
@@ -81,9 +87,17 @@ app.use(
   })
 );
 
+/* ---------------- ADMIN: NO-CACHE (avoid stale admin pages) ---------------- */
+app.use('/admin', (_req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  next();
+});
+
 /* ---------------- PUBLIC ROUTES ---------------- */
 
-// Home Page (now loads data from DB and always defines pageData)
+// Home Page
 app.get('/home', async (req, res) => {
   try {
     let pageData = null;
@@ -111,7 +125,7 @@ app.get('/home', async (req, res) => {
   }
 });
 
-// Animals Page (PUBLIC) — now reads from DB
+// Animals Page
 app.get('/animals', async (req, res) => {
   try {
     let page = null;
@@ -134,6 +148,58 @@ app.get('/animals', async (req, res) => {
         'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
       metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
       pageData: { heroUrl: '', welcomeText: '', animals: [], footer: { title: '', text: '' } }
+    });
+  }
+});
+
+// Gallery Page (normalize both legacy and new shapes)
+function normalizeGallery(doc) {
+  const d = doc || {};
+  const heroImage = (d.hero && d.hero.image) || d.heroUrl || '';
+  const heroTitle = (d.hero && d.hero.title) || d.heroTitle || '';
+  const heroSubtitle = (d.hero && d.hero.subtitle) || d.heroSubtitle || '';
+  const info = d.info || { title: '', text: '' };
+  const images = Array.isArray(d.images) ? d.images : [];
+  const footer = d.footer || { title: '', text: '' };
+  return {
+    // nested for templates that expect hero.*
+    hero: { image: heroImage, title: heroTitle, subtitle: heroSubtitle },
+    info,
+    images,
+    footer,
+    // flat for templates that expect heroUrl/heroTitle/heroSubtitle
+    heroUrl: heroImage,
+    heroTitle,
+    heroSubtitle
+  };
+}
+
+app.get('/gallery', async (req, res) => {
+  try {
+    let page = null;
+    if (AdminGalleryPage) {
+      page = await AdminGalleryPage.findOne({}).lean();
+    }
+    const pageData = normalizeGallery(page);
+
+    res.render('gallery', {
+      title: 'Gallery',
+      metaDescription:
+        'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
+      metaKeywords:
+        'reptile gallery, exotic animals, lizards, snakes, Concord CA',
+      pageData
+    });
+  } catch (err) {
+    console.error('❌ Error loading /gallery:', err);
+    const pageData = normalizeGallery(null);
+    res.render('gallery', {
+      title: 'Gallery',
+      metaDescription:
+        'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
+      metaKeywords:
+        'reptile gallery, exotic animals, lizards, snakes, Concord CA',
+      pageData
     });
   }
 });
@@ -168,17 +234,6 @@ app.get('/asian_water_monitor', (req, res) => {
       'Asian Water Monitors available at Hoffman’s Reptile Shop in Concord, CA.',
     metaKeywords:
       'Asian water monitor, monitor lizards, reptiles Concord California',
-  });
-});
-
-// Gallery Page
-app.get('/gallery', (req, res) => {
-  res.render('mainGallery', {
-    title: 'Gallery',
-    metaDescription:
-      'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
-    metaKeywords:
-      'reptile gallery, exotic animals, lizards, snakes, Concord CA',
   });
 });
 
@@ -240,22 +295,19 @@ app.post('/send-email', async (req, res) => {
 });
 
 /* ---------------- ADMIN ROUTES ---------------- */
-
-// main admin system
 const adminRouter = require('./adminapp');
 app.use('/admin', adminRouter);
 
-// dynamic "edit page" routes
 const adminRoutesPage = require('./admin_routes_page');
 app.use('/admin', adminRoutesPage);
 
-// admin home editor routes
-const adminHomeRoutes = require('./admin_routes_page');
-app.use('/admin', adminHomeRoutes);
+// (Removed duplicate mount that re-required admin_routes_page)
 
-// ✅ admin animals editor routes
 const adminAnimalsRoutes = require('./admin_animals_routes_page');
 app.use('/admin', adminAnimalsRoutes);
+
+const adminGalleryRoutes = require('./admin_gallery_routes_page');
+app.use('/admin', adminGalleryRoutes);
 
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));
