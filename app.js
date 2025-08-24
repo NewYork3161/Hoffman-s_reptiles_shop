@@ -62,6 +62,13 @@ try {
   console.warn('⚠️ Could not load ./models/Admin_About_Page.');
 }
 
+let AdminContactPage;
+try {
+  AdminContactPage = require('./models/Admin_Contact_Page');
+} catch (e) {
+  console.warn('⚠️ Could not load ./models/Admin_Contact_Page.');
+}
+
 /* ---------------- VIEW ENGINE ---------------- */
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -88,7 +95,7 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 8,
+      maxAge: 1000 * 60 * 60 * 8, // 8 hours
     },
   })
 );
@@ -102,6 +109,7 @@ app.use('/admin', (_req, res, next) => {
 });
 
 /* ---------------- PUBLIC ROUTES ---------------- */
+
 // Home
 app.get('/home', async (req, res) => {
   try {
@@ -174,12 +182,24 @@ app.get('/about', async (req, res) => {
 });
 
 // Contact
-app.get('/contact', (req, res) => {
-  res.render('contact', {
-    title: 'Contact',
-    metaDescription: 'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
-    metaKeywords: 'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
-  });
+app.get('/contact', async (req, res) => {
+  try {
+    let page = AdminContactPage ? await AdminContactPage.findOne({}).lean() : null;
+    res.render('contact', {
+      title: 'Contact',
+      metaDescription: 'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
+      metaKeywords: 'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
+      pageData: page || {
+        hero: { image: '', title: '', subtitle: '' },
+        info: { title: '', text: '' },
+        details: { address: '', phone: '', email: '', hours: '', mapEmbed: '' },
+        footer: { title: '', text: '' }
+      }
+    });
+  } catch (err) {
+    console.error('❌ Error loading /contact:', err);
+    res.render('contact', { title: 'Contact', pageData: { hero: {}, info: {}, details: {}, footer: {} } });
+  }
 });
 
 /* ---------------- CONTACT FORM ---------------- */
@@ -212,9 +232,12 @@ app.use('/admin', adminAnimalsRoutes);
 const adminGalleryRoutes = require('./admin_gallery_routes_page');
 app.use('/admin', adminGalleryRoutes);
 
-// ✅ NEW: About page admin routes
 const adminAboutRoutes = require('./admin_about_routes_page');
 app.use('/admin', adminAboutRoutes);
+
+// ✅ NEW: Contact page admin routes
+const adminContactRoutes = require('./admin_contact_routes_page');
+app.use('/admin', adminContactRoutes);
 
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));
