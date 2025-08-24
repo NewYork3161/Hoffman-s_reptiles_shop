@@ -36,15 +36,22 @@
             <!-- Store Information -->
             <div class="col-md-6">
                 <h4>Store Information</h4>
-                <p><strong>Address:</strong> <%= pageData?.details?.address || "2359 Concord Blvd, Concord, CA 94520" %></p>
-                <!-- Map Button (static link stays) -->
+                <%
+                  const addr = (pageData?.details?.address || "2359 Concord Blvd, Concord, CA 94520")
+                                .replace(/^Address:\s*/i, "");
+                  const hoursRaw = pageData?.details?.hours
+                    || "Mon–Fri: 12 PM – 6:30 PM\nSat: 10 AM – 5 PM\nSun: Closed";
+                  const hoursNormalized = hoursRaw.replace(/<\s*br\s*\/?>/gi, "\n");
+                %>
+                <p><strong>Address:</strong> <%= addr %></p>
+                <!-- Map Button -->
                 <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" 
                    target="_blank" 
                    class="btn btn-success mb-3">Map</a>
                 <p><strong>Phone:</strong> <%= pageData?.details?.phone || "(925) 671-9106" %></p>
                 <p><strong>Email:</strong> <%= pageData?.details?.email || "info@hoffmansreptiles.com" %></p>
                 <p><strong>Hours:</strong><br>
-                   <%= (pageData?.details?.hours || "Mon–Fri: 12 PM – 6:30 PM | Sat: 10 AM – 5 PM | Sun: Closed").replace(/\n/g, "<br>") %>
+                   <%- hoursNormalized.replace(/\n/g, "<br>") %>
                 </p>
             </div>
 

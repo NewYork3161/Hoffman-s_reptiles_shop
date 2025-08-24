@@ -27,6 +27,64 @@
 
   <link rel="stylesheet" href="/CSS/home_page.styles.css" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    /* Info Section Styling */
+    .info-section { padding: 28px 0 8px; }
+    .info-section .inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 0 20px;
+      text-align: center;
+    }
+    .info-section h2 {
+      margin-bottom: 18px;
+    }
+    .info-paragraph {
+      line-height: 1.7;
+      font-size: 1.15rem;
+      text-align: center;
+    }
+    @media (max-width: 576px) {
+      .info-paragraph { font-size: 1rem; }
+    }
+
+    /* Grid styling */
+    .image-grid-section { padding: 40px 0; text-align: center; }
+    .image-grid-section h2 {
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+    .image-grid-section p {
+      max-width: 800px;
+      margin: 0 auto 24px;
+      line-height: 1.7;
+      font-size: 1.1rem;
+      font-weight: 600;
+    }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+      justify-items: center;
+    }
+    .image-grid img {
+      max-width: 100%;
+      border-radius: 10px;
+      border: 2px solid #28a745;
+      box-shadow: 0 4px 10px rgba(0,0,0,.4);
+    }
+
+    /* Mid-section condensed paragraph */
+    .mid-section p {
+      max-width: 700px;      /* keeps text squished like a box */
+      margin: 0 auto;        /* centers horizontally */
+      line-height: 1.8;      /* nice spacing */
+      font-size: 1.1rem;     
+      font-weight: 600;      /* boldish */
+      text-align: center;    /* center the lines */
+    }
+  </style>
 </head>
 
 <body>
@@ -34,7 +92,12 @@
   <%- include('partials/navbar') %>
 
   <!-- ===================== Carousel ===================== -->
-  <% const slides = (pageData && Array.isArray(pageData.carousel)) ? pageData.carousel : []; %>
+  <% const slides = (pageData && Array.isArray(pageData.carousel) && pageData.carousel.length) 
+        ? pageData.carousel 
+        : [
+            { image: "/Images/sample1.jpg", title: "Exotic Snake", description: "Beautiful rare snake" },
+            { image: "/Images/sample2.jpg", title: "Colorful Lizard", description: "Vibrant lizard for your terrarium" }
+          ]; %>
   <% if (slides.length) { %>
     <div id="carouselExampleIndicators" class="carousel slide mt-4" data-bs-ride="carousel">
       <div class="carousel-inner">
@@ -63,9 +126,11 @@
 
   <!-- ===================== Info Section ===================== -->
   <% if (pageData?.info?.headline || pageData?.info?.text) { %>
-    <section class="info-section text-center">
-      <% if (pageData.info.headline) { %><h2><%= pageData.info.headline %></h2><% } %>
-      <% if (pageData.info.text) { %><p><%= pageData.info.text %></p><% } %>
+    <section class="info-section">
+      <div class="inner">
+        <% if (pageData.info.headline) { %><h2><%= pageData.info.headline %></h2><% } %>
+        <% if (pageData.info.text) { %><p class="info-paragraph"><%= pageData.info.text %></p><% } %>
+      </div>
     </section>
   <% } %>
 
@@ -94,14 +159,18 @@
   <% } %>
 
   <!-- ===================== Image Grid ===================== -->
-  <% const gridImages = (pageData?.grid?.images) || []; %>
-  <% const gridTitle = (pageData?.grid?.title || '').trim(); %>
-  <% const gridSubtitle = (pageData?.grid?.subtitle || '').trim(); %>
+  <% const gridImages = (pageData?.grid?.images && pageData.grid.images.length) 
+        ? pageData.grid.images 
+        : ["/Images/sample1.jpg", "/Images/sample2.jpg", "/Images/sample3.jpg"]; %>
+  <% const gridTitle = (pageData?.grid?.title || 'Featured Animals').trim(); %>
+  <% const gridSubtitle = (pageData?.grid?.subtitle || 'Check out our latest reptiles in stock!').trim(); %>
 
   <% if (gridImages.length || gridTitle || gridSubtitle) { %>
     <section class="image-grid-section">
       <% if (gridTitle) { %><h2><%= gridTitle %></h2><% } %>
-      <% if (gridSubtitle) { %><p><%= gridSubtitle %></p><% } %>
+      <% if (gridSubtitle) { %>
+        <p><%= gridSubtitle %></p>
+      <% } %>
       <% if (gridImages.length) { %>
         <div class="image-grid">
           <% gridImages.forEach(src => { %>
