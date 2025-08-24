@@ -38,21 +38,28 @@ let AdminHomePage;
 try {
   AdminHomePage = require('./models/Admin_Home_Page');
 } catch (e) {
-  console.warn('⚠️ Could not load ./models/Admin_Home_Page. Make sure the file exists and the name matches.');
+  console.warn('⚠️ Could not load ./models/Admin_Home_Page.');
 }
 
 let AdminAnimalsPage;
 try {
   AdminAnimalsPage = require('./models/Admin_Animals_Page');
 } catch (e) {
-  console.warn('⚠️ Could not load ./models/Admin_Animals_Page. Make sure the file exists and the name matches.');
+  console.warn('⚠️ Could not load ./models/Admin_Animals_Page.');
 }
 
 let AdminGalleryPage;
 try {
   AdminGalleryPage = require('./models/Admin_Gallery_Page');
 } catch (e) {
-  console.warn('⚠️ Could not load ./models/Admin_Gallery_Page. Make sure the file exists and the name matches.');
+  console.warn('⚠️ Could not load ./models/Admin_Gallery_Page.');
+}
+
+let AdminAboutPage;
+try {
+  AdminAboutPage = require('./models/Admin_About_Page');
+} catch (e) {
+  console.warn('⚠️ Could not load ./models/Admin_About_Page.');
 }
 
 /* ---------------- VIEW ENGINE ---------------- */
@@ -61,7 +68,6 @@ app.set('views', path.join(__dirname, 'views'));
 
 /* ---------------- STATIC ---------------- */
 app.use(express.static(path.join(__dirname, 'public')));
-// (Explicit mapping; harmless if also served by the line above)
 app.use('/uploads', express.static(path.join(__dirname, 'public', 'uploads')));
 
 /* ---------------- BODY PARSING + METHOD OVERRIDE ---------------- */
@@ -82,12 +88,12 @@ app.use(
     cookie: {
       httpOnly: true,
       sameSite: 'lax',
-      maxAge: 1000 * 60 * 60 * 8, // 8 hours
+      maxAge: 1000 * 60 * 60 * 8,
     },
   })
 );
 
-/* ---------------- ADMIN: NO-CACHE (avoid stale admin pages) ---------------- */
+/* ---------------- ADMIN: NO-CACHE ---------------- */
 app.use('/admin', (_req, res, next) => {
   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
   res.set('Pragma', 'no-cache');
@@ -96,197 +102,96 @@ app.use('/admin', (_req, res, next) => {
 });
 
 /* ---------------- PUBLIC ROUTES ---------------- */
-
-// Home Page
+// Home
 app.get('/home', async (req, res) => {
   try {
-    let pageData = null;
-    if (AdminHomePage) {
-      pageData = await AdminHomePage.findOne({}).lean();
-    }
+    let pageData = AdminHomePage ? await AdminHomePage.findOne({}).lean() : null;
     res.render('index', {
       title: 'Home Page',
-      metaDescription:
-        'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
-      metaKeywords:
-        'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
+      metaDescription: 'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
+      metaKeywords: 'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
       pageData: pageData || null,
     });
   } catch (err) {
     console.error('❌ Error loading /home:', err);
-    res.render('index', {
-      title: 'Home Page',
-      metaDescription:
-        'Hoffman’s Reptile Shop - Exotic reptiles, snakes, and lizards in Concord, CA.',
-      metaKeywords:
-        'reptiles, snakes, lizards, Concord reptile shop, exotic pets California',
-      pageData: null,
-    });
+    res.render('index', { title: 'Home Page', pageData: null });
   }
 });
 
-// Animals Page
+// Animals
 app.get('/animals', async (req, res) => {
   try {
-    let page = null;
-    if (AdminAnimalsPage) {
-      page = await AdminAnimalsPage.findOne({}).lean();
-    }
-
+    let page = AdminAnimalsPage ? await AdminAnimalsPage.findOne({}).lean() : null;
     res.render('animals', {
       title: 'Animals',
-      metaDescription:
-        'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
+      metaDescription: 'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
       metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
       pageData: page || { heroUrl: '', welcomeText: '', animals: [], footer: { title: '', text: '' } }
     });
   } catch (err) {
     console.error('❌ Error loading /animals:', err);
-    res.render('animals', {
-      title: 'Animals',
-      metaDescription:
-        'Browse our collection of exotic animals including reptiles, lizards, and snakes.',
-      metaKeywords: 'animals, reptiles, exotic pets, lizards, snakes, Concord CA',
-      pageData: { heroUrl: '', welcomeText: '', animals: [], footer: { title: '', text: '' } }
-    });
+    res.render('animals', { title: 'Animals', pageData: { heroUrl: '', welcomeText: '', animals: [] } });
   }
 });
 
-// Gallery Page (normalize both legacy and new shapes)
+// Gallery
 function normalizeGallery(doc) {
   const d = doc || {};
-  const heroImage = (d.hero && d.hero.image) || d.heroUrl || '';
-  const heroTitle = (d.hero && d.hero.title) || d.heroTitle || '';
-  const heroSubtitle = (d.hero && d.hero.subtitle) || d.heroSubtitle || '';
-  const info = d.info || { title: '', text: '' };
-  const images = Array.isArray(d.images) ? d.images : [];
-  const footer = d.footer || { title: '', text: '' };
   return {
-    // nested for templates that expect hero.*
-    hero: { image: heroImage, title: heroTitle, subtitle: heroSubtitle },
-    info,
-    images,
-    footer,
-    // flat for templates that expect heroUrl/heroTitle/heroSubtitle
-    heroUrl: heroImage,
-    heroTitle,
-    heroSubtitle
+    hero: { image: d?.hero?.image || d.heroUrl || '', title: d?.hero?.title || d.heroTitle || '', subtitle: d?.hero?.subtitle || d.heroSubtitle || '' },
+    info: d.info || { title: '', text: '' },
+    images: Array.isArray(d.images) ? d.images : [],
+    footer: d.footer || { title: '', text: '' },
+    heroUrl: (d?.hero?.image || d.heroUrl || ''),
+    heroTitle: (d?.hero?.title || d.heroTitle || ''),
+    heroSubtitle: (d?.hero?.subtitle || d.heroSubtitle || '')
   };
 }
-
 app.get('/gallery', async (req, res) => {
   try {
-    let page = null;
-    if (AdminGalleryPage) {
-      page = await AdminGalleryPage.findOne({}).lean();
-    }
-    const pageData = normalizeGallery(page);
-
-    res.render('gallery', {
-      title: 'Gallery',
-      metaDescription:
-        'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
-      metaKeywords:
-        'reptile gallery, exotic animals, lizards, snakes, Concord CA',
-      pageData
-    });
+    let page = AdminGalleryPage ? await AdminGalleryPage.findOne({}).lean() : null;
+    res.render('gallery', { title: 'Gallery', pageData: normalizeGallery(page) });
   } catch (err) {
     console.error('❌ Error loading /gallery:', err);
-    const pageData = normalizeGallery(null);
-    res.render('gallery', {
-      title: 'Gallery',
-      metaDescription:
-        'Photo gallery of reptiles and exotic animals available at Hoffman’s Reptile Shop.',
-      metaKeywords:
-        'reptile gallery, exotic animals, lizards, snakes, Concord CA',
-      pageData
-    });
+    res.render('gallery', { title: 'Gallery', pageData: normalizeGallery(null) });
   }
 });
 
-// Lizards Page
-app.get('/lizards', (req, res) => {
-  res.render('lizards', {
-    title: 'Lizards',
-    metaDescription:
-      'Explore exotic lizards for sale including monitors and iguanas.',
-    metaKeywords:
-      'lizards, monitor lizards, iguanas, Concord reptiles, California reptile shop',
-  });
+// About
+app.get('/about', async (req, res) => {
+  try {
+    let page = AdminAboutPage ? await AdminAboutPage.findOne({}).lean() : null;
+    res.render('about', {
+      title: 'About Us',
+      metaDescription: 'Learn about Hoffman’s Reptile Shop in Concord, California.',
+      metaKeywords: 'about Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
+      pageData: page || { hero: { image: '', title: '', subtitle: '' }, content: '', footer: { title: '', text: '' } }
+    });
+  } catch (err) {
+    console.error('❌ Error loading /about:', err);
+    res.render('about', { title: 'About Us', pageData: { hero: {}, content: '', footer: {} } });
+  }
 });
 
-// Monitor Lizard Inventory Page
-app.get('/monitor_lizard_inventory', (req, res) => {
-  res.render('monitor_lizard_inventory', {
-    title: 'Monitor Lizard Inventory',
-    metaDescription:
-      'Monitor lizard inventory including Asian water monitors and other species.',
-    metaKeywords:
-      'monitor lizards, Asian water monitor, reptiles for sale Concord CA',
-  });
-});
-
-// Asian Water Monitor Page
-app.get('/asian_water_monitor', (req, res) => {
-  res.render('asian_water_monitor', {
-    title: 'Asian Water Monitor',
-    metaDescription:
-      'Asian Water Monitors available at Hoffman’s Reptile Shop in Concord, CA.',
-    metaKeywords:
-      'Asian water monitor, monitor lizards, reptiles Concord California',
-  });
-});
-
-// About Page
-app.get('/about', (req, res) => {
-  res.render('about', {
-    title: 'About Us',
-    metaDescription:
-      'Learn about Hoffman’s Reptile Shop in Concord, California.',
-    metaKeywords:
-      'about Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
-  });
-});
-
-// Contact Page
+// Contact
 app.get('/contact', (req, res) => {
   res.render('contact', {
     title: 'Contact',
-    metaDescription:
-      'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
-    metaKeywords:
-      'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
+    metaDescription: 'Contact Hoffman’s Reptile Shop in Concord, CA for exotic reptiles and supplies.',
+    metaKeywords: 'contact Hoffman’s Reptiles, Concord CA reptile shop, exotic pet store',
   });
 });
 
-/* ---------------- CONTACT FORM EMAIL ROUTE ---------------- */
+/* ---------------- CONTACT FORM ---------------- */
 app.post('/send-email', async (req, res) => {
   const { name, email, message } = req.body;
-
   const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: {
-      user: 'hudsonriver4151@gmail.com',
-      pass: 'hols yaqs wxdk nfyl', // Google App Password
-    },
+    auth: { user: 'hudsonriver4151@gmail.com', pass: 'hols yaqs wxdk nfyl' },
   });
-
   try {
-    await transporter.sendMail({
-      from: email,
-      to: 'hudsonriver4151@gmail.com',
-      subject: `Message from ${name}`,
-      text: message,
-      replyTo: email,
-    });
-
-    await transporter.sendMail({
-      from: 'hudsonriver4151@gmail.com',
-      to: email,
-      subject: "Thanks for contacting Hoffman's Reptile Shop!",
-      html: `<p>Thanks ${name || 'Friend'}! We’ll get back to you soon.</p>`,
-    });
-
+    await transporter.sendMail({ from: email, to: 'hudsonriver4151@gmail.com', subject: `Message from ${name}`, text: message, replyTo: email });
+    await transporter.sendMail({ from: 'hudsonriver4151@gmail.com', to: email, subject: "Thanks for contacting Hoffman's Reptile Shop!", html: `<p>Thanks ${name || 'Friend'}! We’ll get back to you soon.</p>` });
     res.send('<h1>Email sent successfully!</h1>');
   } catch (err) {
     console.error('EMAIL ERROR:', err);
@@ -301,24 +206,20 @@ app.use('/admin', adminRouter);
 const adminRoutesPage = require('./admin_routes_page');
 app.use('/admin', adminRoutesPage);
 
-// (Removed duplicate mount that re-required admin_routes_page)
-
 const adminAnimalsRoutes = require('./admin_animals_routes_page');
 app.use('/admin', adminAnimalsRoutes);
 
 const adminGalleryRoutes = require('./admin_gallery_routes_page');
 app.use('/admin', adminGalleryRoutes);
 
+// ✅ NEW: About page admin routes
+const adminAboutRoutes = require('./admin_about_routes_page');
+app.use('/admin', adminAboutRoutes);
+
 /* ---------------- DEFAULT & STATIC ---------------- */
 app.get('/', (req, res) => res.redirect('/home'));
-
-app.get('/sitemap.xml', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'sitemap.xml'));
-});
-
-app.get('/robots.txt', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'robots.txt'));
-});
+app.get('/sitemap.xml', (req, res) => res.sendFile(path.join(__dirname, 'public', 'sitemap.xml')));
+app.get('/robots.txt', (req, res) => res.sendFile(path.join(__dirname, 'public', 'robots.txt')));
 
 /* ---------------- START SERVER ---------------- */
 app.listen(PORT, () => {

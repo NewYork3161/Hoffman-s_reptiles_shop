@@ -1,56 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta name="description" content="Hoffman's Reptile Shop in Walnut Creek, California. Exotic reptiles, lizards, snakes, tortoises, and supplies. Visit our reptile store today." />
-    <meta name="keywords" content="Hoffman's Reptile Shop, Walnut Creek reptiles, reptiles for sale, lizards, snakes, tortoises, exotic pets, reptile supplies, Bay Area reptile shop" />
- 
-    <title>About Us - Hoffman's Reptile Shop</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || "About Us - Hoffman's Reptile Shop" %></title>
 
-    <link rel="icon" type="image/png" href="/Images/Logo.png" />
-    <link rel="stylesheet" href="/CSS/home_page.styles.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <meta name="description" content="<%= metaDescription || '' %>" />
+  <meta name="keywords" content="<%= metaKeywords || '' %>" />
+
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+  <link rel="stylesheet" href="/CSS/home_page.styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
 </head>
 <body>
-    <!-- Navbar -->
-    <%- include('partials/navbar') %>
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
 
-    <!-- About Header -->
-    <section class="info-section text-center" style="margin-top:100px;">
-        <h2>About Hoffman's Reptiles</h2>
-        <p>Serving Concord and the Bay Area with quality reptiles, feeders, and supplies.</p>
-    </section>
+  <!-- About Header -->
+  <section class="info-section text-center" style="margin-top:100px;">
+    <h2><%= pageData?.hero?.title || "About Hoffman's Reptiles" %></h2>
+    <p><%= pageData?.hero?.subtitle || "Serving Concord and the Bay Area with quality reptiles, feeders, and supplies." %></p>
+  </section>
 
-    <!-- Split Section (image + text) -->
-    <section class="split-section">
-        <div class="split-image">
-            <img src="/Images/Blue.png" alt="Store Showcase" />
-        </div>
-        <div class="split-text">
-            <h2>Our Story</h2>
-            <p>
-                Hoffman's Reptile Shop is dedicated to responsible reptile care and education.
-                We carry a curated selection of lizards, snakes, turtles, amphibians, and feeders, along with husbandry essentials.
-                Whether you’re a beginner or an experienced keeper, our team is here to help you choose the right animal and set up proper care.
-            </p>
-            <p>
-                Visit us at 2359 Concord Blvd, Concord, CA 94520. We’re proud to support the local community with healthy animals and reliable advice.
-            </p>
-        </div>
-    </section>
+  <!-- Split Section (image + text) -->
+  <section class="split-section">
+    <div class="split-image">
+      <% if (pageData?.hero?.image) { %>
+        <img src="<%= pageData.hero.image %>" alt="Store Showcase" />
+      <% } else { %>
+        <img src="/Images/Blue.png" alt="Store Showcase" />
+      <% } %>
+    </div>
+    <div class="split-text">
+      <h2>Our Story</h2>
+      <p><%= pageData?.content?.text || "Hoffman's Reptile Shop is dedicated to responsible reptile care and education. We carry a curated selection of lizards, snakes, turtles, amphibians, and feeders, along with husbandry essentials. Whether you’re a beginner or an experienced keeper, our team is here to help you choose the right animal and set up proper care. Visit us at 2359 Concord Blvd, Concord, CA 94520. We’re proud to support the local community with healthy animals and reliable advice." %></p>
+    </div>
+  </section>
 
-    <!-- Team/Values (simple info block reusing styles) -->
-    <section class="info-section text-center">
-        <h2>What We Offer</h2>
-        <p>
-            Expert guidance • Quality reptiles • Feeder insects/rodents • Enclosures • Heating & lighting • Décor • Supplements and more.
-        </p>
-    </section>
+  <!-- Team/Values -->
+  <section class="info-section text-center">
+    <h2><%= pageData?.extra?.title || "What We Offer" %></h2>
+    <p><%= pageData?.extra?.text || "Expert guidance • Quality reptiles • Feeder insects/rodents • Enclosures • Heating & lighting • Décor • Supplements and more." %></p>
+  </section>
 
-    <!-- Footer -->
-    <%- include('partials/footer') %>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Footer -->
+  <footer class="footer text-center">
+    <h4><%= pageData?.footer?.title || "Hoffman's Reptiles" %></h4>
+    <p><%= pageData?.footer?.text || "2359 Concord Blvd, Concord, CA 94520" %></p>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
