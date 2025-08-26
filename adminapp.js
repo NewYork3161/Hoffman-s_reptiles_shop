@@ -27,11 +27,12 @@ function absoluteUrl(req, suffixPath) {
 }
 
 function makeMailer() {
+  // Use your Gmail + App Password
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
       user: 'hudsonriver4151@gmail.com',
-      pass: 'hols yaqs wxdk nfyl', // ⚠️ replace with Google App Password or env variable
+      pass: 'rwyntjdrljkgoyxb', // ✅ Google App Password
     },
   });
 }
@@ -48,7 +49,7 @@ router.get('/login', (req, res) => {
   });
 });
 
-// Login POST (requires verified email)
+// Login POST
 router.post('/login', async (req, res) => {
   try {
     if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
@@ -82,7 +83,7 @@ router.get('/register', (req, res) => {
   });
 });
 
-// Register POST (create user, send verify email, show check-your-email)
+// Register POST
 router.post('/register', async (req, res) => {
   try {
     if (!AdminUser) return res.redirect('/admin/register?msg=Server%20config%20error');
@@ -193,19 +194,16 @@ router.get('/verify-email', async (req, res) => {
 });
 
 /* ---------------- FORGOT PASSWORD ---------------- */
-
-// Forgot password form (enter email)
 router.get('/forgot-password', (req, res) => {
-  res.render('AdminForgotPassword', {
-    title: 'Forgot Password',
+  res.render('AdminUpdateLogin', {
+    title: 'Update Login',
     msg: req.query.msg || null,
   });
 });
 
-// Handle forgot password request
 router.post('/forgot-password', async (req, res) => {
   try {
-    if (!AdminUser) return res.redirect('/admin/forgot-password?msg=Server%20config%20error');
+    if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20config%20error');
     const { email } = req.body;
     const normalizedEmail = (email || '').trim().toLowerCase();
 
@@ -248,13 +246,11 @@ router.post('/forgot-password', async (req, res) => {
     });
   } catch (err) {
     console.error('FORGOT PASSWORD ERROR:', err);
-    return res.redirect('/admin/forgot-password?msg=Something%20went%20wrong');
+    return res.redirect('/admin/update-login?msg=Something%20went%20wrong');
   }
 });
 
 /* ---------------- RESET PASSWORD ---------------- */
-
-// Show "Update Password" page after user clicks email link
 router.get('/reset-password', async (req, res) => {
   try {
     if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
@@ -282,8 +278,6 @@ router.get('/reset-password', async (req, res) => {
   }
 });
 
-// Handle reset password form
-// Handle reset password form
 router.post('/reset-password', async (req, res) => {
   try {
     if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
@@ -307,7 +301,6 @@ router.post('/reset-password', async (req, res) => {
       return res.redirect('/admin/login?msg=Invalid%20or%20expired%20link');
     }
 
-    // Prevent reusing old password
     const isSameAsOld = await user.comparePassword(password);
     if (isSameAsOld) {
       return res.redirect(`/admin/reset-password?token=${encodeURIComponent(token)}&msg=Cannot%20reuse%20old%20password`);
@@ -325,8 +318,7 @@ router.post('/reset-password', async (req, res) => {
   }
 });
 
-/* ---------------- FORGOT EMAIL (PHONE LOOKUP) ---------------- */
-
+/* ---------------- FORGOT EMAIL ---------------- */
 router.post('/forgot-email', async (req, res) => {
   try {
     if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20config%20error');
@@ -337,7 +329,6 @@ router.post('/forgot-email', async (req, res) => {
       return res.redirect('/admin/update-login?msg=Phone%20not%20found');
     }
 
-    // Send email reminder to the user’s registered email
     const transporter = makeMailer();
     await transporter.sendMail({
       from: 'hudsonriver4151@gmail.com',
@@ -364,9 +355,60 @@ router.post('/forgot-email', async (req, res) => {
   }
 });
 
-/* ---------------- OTHER ROUTES ---------------- */
+/* ---------------- DELETE ACCOUNT ---------------- */
+router.get('/delete-account', (req, res) => {
+  res.render('admin_delete_account', {
+    title: 'Delete Account',
+    msg: req.query.msg || null,
+  });
+});
 
-// Update login page
+router.post('/delete-account', async (req, res) => {
+  try {
+    if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
+
+    const { firstName = '', lastName = '', email = '', phone = '', password = '' } = req.body;
+
+    const normalizedEmail = (email || '').trim().toLowerCase();
+    const normalizedPhone = (phone || '').trim();
+
+    const user =
+      (normalizedEmail && await AdminUser.findOne({ email: normalizedEmail })) ||
+      (normalizedPhone && await AdminUser.findOne({ phone: normalizedPhone }));
+
+    if (!user) {
+      return res.redirect('/admin/delete-account?msg=Account%20not%20found');
+    }
+
+    if (firstName && user.firstName !== firstName) {
+      return res.redirect('/admin/delete-account?msg=First%20name%20does%20not%20match');
+    }
+    if (lastName && user.lastName !== lastName) {
+      return res.redirect('/admin/delete-account?msg=Last%20name%20does%20not%20match');
+    }
+    if (normalizedPhone && user.phone !== normalizedPhone) {
+      return res.redirect('/admin/delete-account?msg=Phone%20number%20does%20not%20match');
+    }
+
+    const ok = await user.comparePassword(password || '');
+    if (!ok) {
+      return res.redirect('/admin/delete-account?msg=Incorrect%20password');
+    }
+
+    if (req.session?.admin?.id === String(user._id)) {
+      req.session.destroy(() => {});
+    }
+
+    await AdminUser.deleteOne({ _id: user._id });
+
+    return res.redirect('/admin/login?msg=Account%20deleted');
+  } catch (err) {
+    console.error('DELETE ACCOUNT ERROR:', err);
+    return res.redirect('/admin/delete-account?msg=Delete%20failed');
+  }
+});
+
+/* ---------------- OTHER ROUTES ---------------- */
 router.get('/update-login', (req, res) => {
   res.render('AdminUpdateLogin', {
     title: 'Update Login',
@@ -374,7 +416,6 @@ router.get('/update-login', (req, res) => {
   });
 });
 
-// Dashboard (protected)
 router.get('/dashboard', requireAdmin, (req, res) => {
   res.render('admin_dashboard', {
     title: 'Admin Dashboard',
@@ -382,7 +423,6 @@ router.get('/dashboard', requireAdmin, (req, res) => {
   });
 });
 
-// Logout
 router.post('/logout', (req, res) => {
   req.session.destroy(() => {
     res.redirect('/admin/login?msg=Logged%20out');
