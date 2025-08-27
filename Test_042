@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>admin review emails</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <style>
+    body { background:#000; color:#28a745; font-family:Arial, Helvetica, sans-serif; padding:20px; }
+    h1 { color:#28a745; margin-bottom:24px; }
+    .message-card { background:#111; border:1px solid #222; border-radius:8px; padding:18px; margin-bottom:24px; }
+    .message-card .full-name { font-size:1.3rem; font-weight:700; color:#28a745; }
+    .message-card .email { font-size:0.95rem; color:#9af59c; display:block; margin-bottom:8px; }
+    .message-card .text { margin:12px 0; color:#28a745; line-height:1.6; white-space:pre-wrap; }
+    .message-card small { color:#888; }
+    .reply-btn { margin-top:10px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>📧 admin review emails</h1>
+
+    <% if (messages.length === 0) { %>
+      <p>No messages saved yet.</p>
+    <% } else { %>
+      <% messages.forEach(msg => { %>
+        <div class="message-card">
+          <div class="full-name"><%= msg.full_name %></div>
+          <a href="mailto:<%= msg.email %>" class="email"><%= msg.email %></a>
+          <div class="text"><%= msg.message %></div>
+          <small>Submitted: <%= msg.created_at.toLocaleString() %></small>
+          <div class="reply-btn">
+            <a class="btn btn-outline-primary btn-sm"
+               href="https://mail.google.com/mail/?view=cm&fs=1&to=<%= msg.email %>&su=Reply from Hoffman's Reptiles"
+               target="_blank">
+              Reply via Gmail
+            </a>
+          </div>
+        </div>
+      <% }) %>
+    <% } %>
+
+    <a href="/admin/dashboard" class="btn btn-outline-secondary mt-3">← back to dashboard</a>
+  </div>
+</body>
+</html>

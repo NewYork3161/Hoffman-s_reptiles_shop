@@ -1,128 +1,129 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title><%= title || "Contact - Hoffman's Reptile Shop" %></title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || "Contact - Hoffman's Reptile Shop" %></title>
 
-    <link rel="icon" type="image/png" href="/Images/Logo.png" />
-    <link rel="stylesheet" href="/CSS/home_page.styles.css" />
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+  <link rel="stylesheet" href="/CSS/home_page.styles.css" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-    <style>
-        body {
-            background-color: #000;
-            color: #28a745;
-        }
-        .navbar {
-            background-color: #fff !important;
-        }
-        .navbar .nav-link, .navbar .navbar-brand span {
-            color: #28a745 !important;
-            font-weight: bold;
-        }
-        .info-section {
-            margin-top: 100px;
-            color: #28a745;
-        }
-        .btn-success {
-            background-color: #28a745;
-            border: none;
-        }
-        .confirmation-box {
-            background-color: #1a1a1a;
-            border-radius: 10px;
-            padding: 30px;
-            text-align: center;
-            margin: 30px auto;
-            color: #28a745;
-            max-width: 600px;
-        }
-        .confirmation-box h4 {
-            color: #28a745;
-            margin-bottom: 20px;
-        }
-        .confirmation-box .btn {
-            margin: 10px 10px 0;
-            padding: 12px 20px;
-            font-weight: bold;
-        }
-    </style>
+  <style>
+    body {
+      background-color: #000;
+      color: #28a745;
+    }
+    .navbar {
+      background-color: #fff !important;
+    }
+    .navbar .nav-link,
+    .navbar .navbar-brand span {
+      color: #28a745 !important;
+      font-weight: bold;
+    }
+    .info-section {
+      margin-top: 100px;
+      color: #28a745;
+    }
+    .btn-success {
+      background-color: #28a745;
+      border: none;
+    }
+    .confirmation-box {
+      background-color: #1a1a1a;
+      border-radius: 10px;
+      padding: 30px;
+      text-align: center;
+      margin: 30px auto;
+      color: #28a745;
+      max-width: 600px;
+    }
+    .confirmation-box h4 {
+      color: #28a745;
+      margin-bottom: 20px;
+    }
+    .confirmation-box .btn {
+      margin: 10px 10px 0;
+      padding: 12px 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
-    <!-- Navbar -->
-    <%- include('partials/navbar') %>
+  <!-- Navbar -->
+  <%- include('partials/navbar') %>
 
-    <!-- Contact Header -->
-    <section class="info-section text-center">
-        <h2><%= pageData?.info?.title || "Contact Us" %></h2>
-        <p><%= pageData?.info?.text || "Have a question? Get in touch with Hoffman's Reptiles today." %></p>
-    </section>
+  <!-- Contact Header -->
+  <section class="info-section text-center">
+    <h2><%= pageData?.info?.title || "Contact Us" %></h2>
+    <p><%= pageData?.info?.text || "Have a question? Get in touch with Hoffman's Reptiles today." %></p>
+  </section>
 
-    <!-- ✅ Success Message Box -->
-    <% if (msg && msg.includes('success')) { %>
-        <div class="confirmation-box">
-            <h4>Thanks for contacting Hoffman's Reptiles!</h4>
-            <p>We're glad you reached out. We'll get back to you as soon as we can.</p>
-            <div class="mt-4">
-                <a href="/home" class="btn btn-success">Home</a>
-                <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" target="_blank" class="btn btn-success">Map</a>
-                <a href="tel:+19256719106" class="btn btn-success">Call (925) 671-9106</a>
-            </div>
-        </div>
-    <% } %>
-
-    <!-- Contact Info + Form -->
-    <div class="container" style="padding:40px 20px; max-width:800px;">
-        <div class="row">
-            <!-- Store Information -->
-            <div class="col-md-6">
-                <h4>Store Information</h4>
-                <%
-                  const addr = (pageData?.details?.address || "2359 Concord Blvd, Concord, CA 94520")
-                                .replace(/^Address:\s*/i, "");
-                  const hoursRaw = pageData?.details?.hours
-                    || "Mon–Fri: 12 PM – 6:30 PM\nSat: 10 AM – 5 PM\nSun: Closed";
-                  const hoursNormalized = hoursRaw.replace(/<\s*br\s*\/?>/gi, "\n");
-                %>
-                <p><strong>Address:</strong> <%= addr %></p>
-                <!-- Map Button -->
-                <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" 
-                   target="_blank" 
-                   class="btn btn-success mb-3">Map</a>
-                <p><strong>Phone:</strong> <%= pageData?.details?.phone || "(925) 671-9106" %></p>
-                <p><strong>Email:</strong> <%= pageData?.details?.email || "info@hoffmansreptiles.com" %></p>
-                <p><strong>Hours:</strong><br>
-                   <%- hoursNormalized.replace(/\n/g, "<br>") %>
-                </p>
-            </div>
-
-            <!-- Contact Form -->
-            <div class="col-md-6">
-                <h4>Send us a message</h4>
-                <form action="/send-email" method="POST">
-                    <div class="mb-3">
-                        <label for="name" class="form-label">Your Name</label>
-                        <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="email" class="form-label">Your Email</label>
-                        <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required />
-                    </div>
-                    <div class="mb-3">
-                        <label for="message" class="form-label">Message</label>
-                        <textarea class="form-control" id="message" name="message" rows="4" placeholder="Your message..." required></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-success">Send</button>
-                </form>
-            </div>
-        </div>
+  <!-- ✅ Success Message Box (only shows if redirected with ?msg=success) -->
+  <% if (msg && msg.includes('success')) { %>
+    <div class="confirmation-box">
+      <h4>Thanks for contacting Hoffman's Reptiles!</h4>
+      <p>We're glad you reached out. We'll get back to you as soon as we can.</p>
+      <div class="mt-4">
+        <a href="/home" class="btn btn-success">Home</a>
+        <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" target="_blank" class="btn btn-success">Map</a>
+        <a href="tel:+19256719106" class="btn btn-success">Call (925) 671-9106</a>
+      </div>
     </div>
+  <% } %>
 
-    <!-- Footer -->
-    <%- include('partials/footer') %>
+  <!-- Contact Info + Form -->
+  <div class="container" style="padding:40px 20px; max-width:800px;">
+    <div class="row">
+      <!-- Store Information -->
+      <div class="col-md-6">
+        <h4>Store Information</h4>
+        <%
+          const addr = (pageData?.details?.address || "2359 Concord Blvd, Concord, CA 94520").replace(/^Address:\s*/i, "");
+          const hoursRaw = pageData?.details?.hours
+            || "Mon–Fri: 12 PM – 6:30 PM\nSat: 10 AM – 5 PM\nSun: Closed";
+          const hoursNormalized = hoursRaw.replace(/<\s*br\s*\/?>/gi, "\n");
+        %>
+        <p><strong>Address:</strong> <%= addr %></p>
+        <!-- Map Button -->
+        <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520"
+           target="_blank"
+           class="btn btn-success mb-3">Map</a>
+        <p><strong>Phone:</strong> <%= pageData?.details?.phone || "(925) 671-9106" %></p>
+        <p><strong>Email:</strong> <%= pageData?.details?.email || "info@hoffmansreptiles.com" %></p>
+        <p><strong>Hours:</strong><br>
+          <%- hoursNormalized.replace(/\n/g, "<br>") %>
+        </p>
+      </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+      <!-- Contact Form -->
+      <div class="col-md-6">
+        <h4>Send us a message</h4>
+        <!-- ✅ form posts to backend -->
+        <form action="/admin/contact/send" method="POST">
+          <div class="mb-3">
+            <label for="name" class="form-label">Your Name</label>
+            <input type="text" class="form-control" id="name" name="name" placeholder="John Doe" required />
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label">Your Email</label>
+            <input type="email" class="form-control" id="email" name="email" placeholder="you@example.com" required />
+          </div>
+          <div class="mb-3">
+            <label for="message" class="form-label">Message</label>
+            <textarea class="form-control" id="message" name="message" rows="4" placeholder="Your message..." required></textarea>
+          </div>
+          <button type="submit" class="btn btn-success">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <%- include('partials/footer') %>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

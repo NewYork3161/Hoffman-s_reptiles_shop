@@ -201,159 +201,7 @@ router.get('/forgot-password', (req, res) => {
   });
 });
 
-router.post('/forgot-password', async (req, res) => {
-  try {
-    if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20config%20error');
-    const { email } = req.body;
-    const normalizedEmail = (email || '').trim().toLowerCase();
-
-    const user = await AdminUser.findOne({ email: normalizedEmail });
-    if (user) {
-      const token = crypto.randomBytes(32).toString('hex');
-      const expires = new Date(Date.now() + 1000 * 60 * 60 * 1); // 1 hour
-      user.resetToken = token;
-      user.resetTokenExpiresAt = expires;
-      await user.save();
-
-      const resetLink = absoluteUrl(req, `/admin/reset-password?token=${token}`);
-      const transporter = makeMailer();
-
-      await transporter.sendMail({
-        from: 'hudsonriver4151@gmail.com',
-        to: normalizedEmail,
-        subject: 'Reset your admin password',
-        html: `
-          <div style="font-family:Arial,sans-serif;padding:16px">
-            <h2>Reset your password</h2>
-            <p>Click the button below to set a new password.</p>
-            <p>
-              <a href="${resetLink}" style="display:inline-block;padding:12px 18px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:6px">
-                Reset Password
-              </a>
-            </p>
-            <p>If the button doesn't work, copy and paste this link:</p>
-            <p style="word-break:break-all">${resetLink}</p>
-            <hr/>
-            <p>This link expires in 1 hour.</p>
-          </div>
-        `,
-      });
-    }
-
-    return res.render('AdminCheckEmail', {
-      title: 'Check Your Email',
-      email: normalizedEmail,
-    });
-  } catch (err) {
-    console.error('FORGOT PASSWORD ERROR:', err);
-    return res.redirect('/admin/update-login?msg=Something%20went%20wrong');
-  }
-});
-
-/* ---------------- RESET PASSWORD ---------------- */
-router.get('/reset-password', async (req, res) => {
-  try {
-    if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
-    const { token } = req.query;
-    if (!token) return res.redirect('/admin/login?msg=Missing%20token');
-
-    const now = new Date();
-    const user = await AdminUser.findOne({
-      resetToken: token,
-      resetTokenExpiresAt: { $gt: now },
-    });
-    if (!user) {
-      return res.redirect('/admin/login?msg=Invalid%20or%20expired%20link');
-    }
-
-    return res.render('AdminResetPassword', {
-      title: 'Update Password',
-      token,
-      email: user.email,
-      msg: req.query.msg || null,
-    });
-  } catch (err) {
-    console.error('RESET PAGE ERROR:', err);
-    return res.redirect('/admin/login?msg=Reset%20error');
-  }
-});
-
-router.post('/reset-password', async (req, res) => {
-  try {
-    if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
-    const { token, password, confirm } = req.body;
-
-    if (!token) return res.redirect('/admin/login?msg=Missing%20token');
-    if (password !== confirm) {
-      return res.redirect(`/admin/reset-password?token=${encodeURIComponent(token)}&msg=Passwords%20do%20not%20match`);
-    }
-    const strong = /^(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
-    if (!strong.test(password)) {
-      return res.redirect(`/admin/reset-password?token=${encodeURIComponent(token)}&msg=Weak%20password`);
-    }
-
-    const now = new Date();
-    const user = await AdminUser.findOne({
-      resetToken: token,
-      resetTokenExpiresAt: { $gt: now },
-    });
-    if (!user) {
-      return res.redirect('/admin/login?msg=Invalid%20or%20expired%20link');
-    }
-
-    const isSameAsOld = await user.comparePassword(password);
-    if (isSameAsOld) {
-      return res.redirect(`/admin/reset-password?token=${encodeURIComponent(token)}&msg=Cannot%20reuse%20old%20password`);
-    }
-
-    user.password = password;
-    user.resetToken = undefined;
-    user.resetTokenExpiresAt = undefined;
-    await user.save();
-
-    return res.redirect('/admin/login?msg=Password%20updated.%20Please%20login.');
-  } catch (err) {
-    console.error('RESET SUBMIT ERROR:', err);
-    return res.redirect('/admin/login?msg=Reset%20error');
-  }
-});
-
-/* ---------------- FORGOT EMAIL ---------------- */
-router.post('/forgot-email', async (req, res) => {
-  try {
-    if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20config%20error');
-    const { phone } = req.body;
-
-    const user = await AdminUser.findOne({ phone: (phone || '').trim() });
-    if (!user) {
-      return res.redirect('/admin/update-login?msg=Phone%20not%20found');
-    }
-
-    const transporter = makeMailer();
-    await transporter.sendMail({
-      from: 'hudsonriver4151@gmail.com',
-      to: user.email,
-      subject: 'Your Admin Account Information',
-      html: `
-        <div style="font-family:Arial,sans-serif;padding:16px">
-          <h2>Account Recovery</h2>
-          <p>Hello ${user.firstName || 'Admin'},</p>
-          <p>You requested account recovery using your phone number.</p>
-          <p><b>Email:</b> ${user.email}</p>
-          <p>If you did not request this, please ignore this message.</p>
-        </div>
-      `,
-    });
-
-    return res.render('AdminCheckEmail', {
-      title: 'Check Your Email',
-      email: user.email,
-    });
-  } catch (err) {
-    console.error('FORGOT EMAIL ERROR:', err);
-    return res.redirect('/admin/update-login?msg=Recovery%20error');
-  }
-});
+// ... keep your forgot-password and reset-password routes unchanged ...
 
 /* ---------------- DELETE ACCOUNT ---------------- */
 router.get('/delete-account', (req, res) => {
@@ -363,50 +211,7 @@ router.get('/delete-account', (req, res) => {
   });
 });
 
-router.post('/delete-account', async (req, res) => {
-  try {
-    if (!AdminUser) return res.redirect('/admin/login?msg=Server%20config%20error');
-
-    const { firstName = '', lastName = '', email = '', phone = '', password = '' } = req.body;
-
-    const normalizedEmail = (email || '').trim().toLowerCase();
-    const normalizedPhone = (phone || '').trim();
-
-    const user =
-      (normalizedEmail && await AdminUser.findOne({ email: normalizedEmail })) ||
-      (normalizedPhone && await AdminUser.findOne({ phone: normalizedPhone }));
-
-    if (!user) {
-      return res.redirect('/admin/delete-account?msg=Account%20not%20found');
-    }
-
-    if (firstName && user.firstName !== firstName) {
-      return res.redirect('/admin/delete-account?msg=First%20name%20does%20not%20match');
-    }
-    if (lastName && user.lastName !== lastName) {
-      return res.redirect('/admin/delete-account?msg=Last%20name%20does%20not%20match');
-    }
-    if (normalizedPhone && user.phone !== normalizedPhone) {
-      return res.redirect('/admin/delete-account?msg=Phone%20number%20does%20not%20match');
-    }
-
-    const ok = await user.comparePassword(password || '');
-    if (!ok) {
-      return res.redirect('/admin/delete-account?msg=Incorrect%20password');
-    }
-
-    if (req.session?.admin?.id === String(user._id)) {
-      req.session.destroy(() => {});
-    }
-
-    await AdminUser.deleteOne({ _id: user._id });
-
-    return res.redirect('/admin/login?msg=Account%20deleted');
-  } catch (err) {
-    console.error('DELETE ACCOUNT ERROR:', err);
-    return res.redirect('/admin/delete-account?msg=Delete%20failed');
-  }
-});
+// ... keep your delete-account POST route unchanged ...
 
 /* ---------------- OTHER ROUTES ---------------- */
 router.get('/update-login', (req, res) => {
@@ -420,6 +225,14 @@ router.get('/dashboard', requireAdmin, (req, res) => {
   res.render('admin_dashboard', {
     title: 'Admin Dashboard',
     metaDescription: 'Admin tools',
+  });
+});
+
+// ✅ NEW: Review Emails page
+router.get('/review_emails', requireAdmin, (req, res) => {
+  res.render('admin_review_emails', {
+    title: 'Review Emails',
+    metaDescription: 'View and reply to contact form submissions',
   });
 });
 
