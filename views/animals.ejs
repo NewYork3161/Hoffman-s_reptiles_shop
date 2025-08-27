@@ -3,104 +3,44 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="Browse all animals at Hoffman's Reptile Shop. Lizards, snakes, tortoises, turtles, and exotic reptiles in Walnut Creek, CA." />
-  <meta name="keywords" content="reptiles for sale, lizards for sale, snakes for sale, tortoises, turtles, exotic pets Walnut Creek, reptile shop Bay Area" />
-
+  <meta name="description" content="Browse all animals at Hoffman's Reptile Shop. Lizards, snakes, tortoises, turtles, and exotic reptiles." />
+  <meta name="keywords" content="reptiles for sale, lizards for sale, snakes for sale, tortoises, turtles, exotic pets" />
   <title>Animals - Hoffman's Reptile Shop</title>
 
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="/Images/Logo.png" />
-
-  <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
-
-  <!-- Shared stylesheet -->
   <link rel="stylesheet" href="/CSS/home_page.styles.css" />
 
   <style>
     :root { --green:#0a4e07; --bg:#000; --card:#111; }
     * { box-sizing:border-box; }
-    body {
-      margin:0;
-      color:var(--green);
-      background:var(--bg);
-      font-family: Arial, Helvetica, sans-serif;
-      padding-top: 76px;
-    }
+    body { margin:0; color:var(--green); background:var(--bg); font-family: Arial, Helvetica, sans-serif; padding-top: 76px; }
 
-    /* Hero image */
     .hero { width: 100%; overflow: hidden; margin-bottom: 30px; }
     .hero img { width: 100%; height: 1000px; display: block; object-fit: cover; }
 
-    .page-title { font-size:2rem; margin:0 0 18px 0; color:var(--green); }
+    .content-box { background: rgba(0,0,0,0.6); padding: 20px; margin-top: 15px; border-radius: 8px; }
 
-    /* Transparent faded box for section content */
-    .content-box {
-      background: rgba(0,0,0,0.6);
-      padding: 20px;
-      margin-top: 15px;
-      border-radius: 8px;
-    }
-
-    /* Welcome Box */
-    .welcome-box {
-      background: rgba(150, 149, 149, 0.1);
-      padding: 20px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      max-width: 900px;
-      margin-left: auto;
-      margin-right: auto;
-    }
+    .welcome-box { background: rgba(150,149,149,0.1); padding: 20px; border-radius: 8px; margin-bottom: 20px; max-width: 900px; margin-left:auto; margin-right:auto; }
     .welcome-box h2 { color: var(--green); margin-bottom: 10px; }
     .welcome-box p { color:#fff; }
 
-    /* Grid layout */
-    .animal-list {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 20px;
-      margin-top: 15px;
-    }
+    .animal-list { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:20px; margin-top:15px; }
     @media (max-width: 1200px) { .animal-list { grid-template-columns: repeat(3, 1fr); } }
     @media (max-width: 900px)  { .animal-list { grid-template-columns: repeat(2, 1fr); } }
     @media (max-width: 560px)  { .animal-list { grid-template-columns: 1fr; } }
 
-    .animal-box {
-      display:flex;
-      flex-direction: column;
-      align-items:stretch;
-      background:rgba(0,0,0,0.7);
-      color:var(--green);
-      padding:10px;
-      border:none;
-      border-radius:6px;
-      text-decoration:none;
-      transition: background .2s ease;
-      min-height: 100%;
-    }
+    .animal-box { display:flex; flex-direction:column; align-items:stretch; background:rgba(0,0,0,0.7); color:var(--green); padding:10px; border:none; border-radius:6px; text-decoration:none; transition:background .2s ease; min-height:100%; }
     .animal-box:hover { background:rgba(0,0,0,0.9); }
-    .animal-name {
-      font-size:1.1rem;
-      font-weight:700;
-      margin: 2px 2px 8px;
-      color:var(--green);
-      text-align:center;
-    }
-    .animal-box img {
-      width: 100%;
-      height: 240px;
-      object-fit:cover;
-      border-radius:4px;
-      background:#000;
-    }
-    .animal-meta {
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:10px;
-      padding:8px 2px 2px;
-    }
+
+    .animal-name { font-size:1.1rem; font-weight:700; margin: 2px 2px 8px; color:var(--green); text-align:center; }
+    .animal-name a { color:var(--green); text-decoration:none; cursor:pointer; }
+    .animal-name a:hover { text-decoration:underline; }
+
+    .animal-img-link { display:block; border-radius:4px; }
+    .animal-img-link img { width:100%; height:240px; object-fit:cover; border-radius:4px; background:#000; cursor:pointer; }
+
+    .animal-meta { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:8px 2px 2px; }
     .price { color:#e6ffe6; font-weight:700; }
     .avail { font-size:.85rem; padding:4px 8px; border-radius:999px; }
     .avail.yes { background: rgba(0, 128, 0, .25); color:#b7ffb7; border:1px solid rgba(0,128,0,.35); }
@@ -108,11 +48,18 @@
   </style>
 </head>
 <body>
-  <!-- Sticky Navbar -->
+  <!-- Navbar -->
   <%- include('partials/navbar') %>
 
   <%
-    // Pull values from pageData with safe fallbacks
+    // helpers + data
+    function slugify(str) {
+      return String(str || '')
+        .toLowerCase()
+        .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+    }
     const hero    = (typeof pageData !== 'undefined' && pageData && pageData.heroUrl) ? pageData.heroUrl : '/Images/hero_animal_page.png';
     const welcome = (typeof pageData !== 'undefined' && pageData && pageData.welcomeText) ? pageData.welcomeText : "Welcome to Hoffman's Reptiles!";
     const items   = (typeof pageData !== 'undefined' && pageData && Array.isArray(pageData.animals)) ? pageData.animals : [];
@@ -126,14 +73,13 @@
   <!-- Content -->
   <div class="container">
     <div class="content-box">
-
       <!-- Welcome Box -->
       <div class="welcome-box">
         <h2>Welcome to Hoffman's Reptiles</h2>
         <p><%= welcome %></p>
       </div>
 
-      <!-- Animal Grid (name on top, image, price + availability) -->
+      <!-- Animal Grid -->
       <div class="animal-list">
         <% if (items.length === 0) { %>
           <div class="animal-box">
@@ -145,10 +91,20 @@
             </div>
           </div>
         <% } else { %>
-          <% items.forEach(a => { %>
+          <% items.forEach(a => {
+               const href = a && a.name
+                 ? `/animals/${slugify(a.name)}`
+                 : (a && a._id ? `/animals/${a._id}` : '#');
+          %>
             <div class="animal-box">
-              <div class="animal-name"><%= a.name || 'Unnamed' %></div>
-              <img src="<%= a.image %>" alt="<%= a.name || 'Animal' %>">
+              <div class="animal-name">
+                <a href="<%= href %>" aria-label="<%= a.name || 'Animal' %> details"><%= a.name || 'Unnamed' %></a>
+              </div>
+
+              <a class="animal-img-link" href="<%= href %>" aria-label="Open <%= a.name || 'animal' %> page">
+                <img src="<%= a.image %>" alt="<%= a.name || 'Animal' %>">
+              </a>
+
               <div class="animal-meta">
                 <span class="price"><%= a.price ? ('$' + a.price) : '$—' %></span>
                 <span class="avail <%= a.available ? 'yes' : 'no' %>">
@@ -159,7 +115,6 @@
           <% }) %>
         <% } %>
       </div>
-
     </div>
   </div>
 

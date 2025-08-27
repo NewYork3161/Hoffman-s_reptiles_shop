@@ -11,13 +11,43 @@
     <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
     <style>
-        body { background-color:#000; color:#28a745; }
-        .navbar { background-color:#fff !important; }
-        .navbar .nav-link, .navbar .navbar-brand span {
-            color:#28a745 !important; font-weight:bold;
+        body {
+            background-color: #000;
+            color: #28a745;
         }
-        .info-section { margin-top:100px; color:#28a745; }
-        .btn-success { background-color:#28a745; border:none; }
+        .navbar {
+            background-color: #fff !important;
+        }
+        .navbar .nav-link, .navbar .navbar-brand span {
+            color: #28a745 !important;
+            font-weight: bold;
+        }
+        .info-section {
+            margin-top: 100px;
+            color: #28a745;
+        }
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+        .confirmation-box {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            margin: 30px auto;
+            color: #28a745;
+            max-width: 600px;
+        }
+        .confirmation-box h4 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        .confirmation-box .btn {
+            margin: 10px 10px 0;
+            padding: 12px 20px;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -29,6 +59,19 @@
         <h2><%= pageData?.info?.title || "Contact Us" %></h2>
         <p><%= pageData?.info?.text || "Have a question? Get in touch with Hoffman's Reptiles today." %></p>
     </section>
+
+    <!-- ✅ Success Message Box -->
+    <% if (msg && msg.includes('success')) { %>
+        <div class="confirmation-box">
+            <h4>Thanks for contacting Hoffman's Reptiles!</h4>
+            <p>We're glad you reached out. We'll get back to you as soon as we can.</p>
+            <div class="mt-4">
+                <a href="/home" class="btn btn-success">Home</a>
+                <a href="https://www.google.com/maps?q=2359+Concord+Blvd,+Concord,+CA+94520" target="_blank" class="btn btn-success">Map</a>
+                <a href="tel:+19256719106" class="btn btn-success">Call (925) 671-9106</a>
+            </div>
+        </div>
+    <% } %>
 
     <!-- Contact Info + Form -->
     <div class="container" style="padding:40px 20px; max-width:800px;">
@@ -79,6 +122,7 @@
 
     <!-- Footer -->
     <%- include('partials/footer') %>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
