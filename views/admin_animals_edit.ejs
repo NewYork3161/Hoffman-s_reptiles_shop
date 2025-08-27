@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title><%= title || 'Edit Animals - Admin' %></title>
 
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="/Images/logo.png" />
-  <link rel="shortcut icon" type="image/png" href="/Images/logo.png" />
+  <!-- Favicon (capital I folder + capital L file) -->
+  <link rel="icon" type="image/png" href="/Images/Logo.png" />
+  <link rel="shortcut icon" type="image/png" href="/Images/Logo.png" />
 
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
@@ -88,10 +88,13 @@
         <% } %>
 
         <form action="/admin/animals/hero?_method=PUT" method="POST" enctype="multipart/form-data" class="row g-3">
-          <div class="col-md-8">
+          <div class="col-md-8 image-field">
             <label class="form-label">New Hero Image</label>
             <input class="form-control image-input" type="file" accept="image/*" name="imageFile" required>
             <img class="preview-image d-none" alt="Preview">
+            <div class="d-flex gap-2 mt-2">
+              <button type="button" class="btn btn-outline-secondary btn-cancel">Cancel</button>
+            </div>
             <div class="muted mt-1">Recommended: wide landscape image.</div>
           </div>
           <div class="col-md-4 d-flex align-items-end">
@@ -142,13 +145,16 @@
               <option value="false">Not Available</option>
             </select>
           </div>
-          <div class="col-md-3">
+          <div class="col-md-3 image-field">
             <label class="form-label">Image</label>
             <input class="form-control image-input" type="file" name="imageFile" accept="image/*" required>
             <img class="preview-image d-none" alt="Preview">
+            <div class="d-grid mt-2">
+              <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
+            </div>
           </div>
 
-          <!-- NEW: Description on Add form (appears under the row) -->
+          <!-- Description on Add form -->
           <div class="col-12">
             <label class="form-label">Description (for the animal detail page)</label>
             <textarea class="form-control" name="description" rows="4" placeholder="Short description to show on the animal’s page (not shown on the main grid)"></textarea>
@@ -205,7 +211,7 @@
                       </select>
                     </div>
 
-                    <!-- NEW: open modal to edit description (keeps card clean) -->
+                    <!-- Modal trigger to edit description -->
                     <button type="button" class="btn btn-outline-secondary w-100 btn-sm mt-2"
                             data-bs-toggle="modal" data-bs-target="#descModal-<%= id %>">
                       Edit Description
@@ -217,9 +223,14 @@
                   <!-- Replace Image -->
                   <form action="/admin/animals/items/<%= id %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mt-2">
                     <input type="hidden" name="__edit" value="imageOnly">
-                    <label class="form-label">Replace Image</label>
-                    <input class="form-control mb-2 image-input" type="file" accept="image/*" name="imageFile">
-                    <img class="preview-image d-none" alt="Preview">
+                    <div class="image-field">
+                      <label class="form-label">Replace Image</label>
+                      <input class="form-control mb-2 image-input" type="file" accept="image/*" name="imageFile">
+                      <img class="preview-image d-none" alt="Preview">
+                      <div class="d-grid mt-2">
+                        <button type="button" class="btn btn-outline-secondary btn-sm btn-cancel">Cancel</button>
+                      </div>
+                    </div>
                     <button class="btn btn-outline-primary w-100 btn-sm mt-2">Replace Image</button>
                   </form>
 
@@ -230,7 +241,7 @@
                 </div>
               </div>
 
-              <!-- NEW: Description Modal for this animal -->
+              <!-- Description Modal for this animal -->
               <div class="modal fade" id="descModal-<%= id %>" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg modal-dialog-centered">
                   <div class="modal-content bg-dark text-light">
@@ -279,17 +290,21 @@
     </div>
   </div>
 
-  <!-- Live image preview script -->
+  <!-- Live image preview + Cancel behavior -->
   <script>
     document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll(".image-input").forEach(input => {
-        input.addEventListener("change", event => {
-          const file = event.target.files[0];
-          const preview = event.target.closest("div").querySelector(".preview-image");
+      function wireImageField(field) {
+        const input   = field.querySelector(".image-input");
+        const preview = field.querySelector(".preview-image");
+        const cancel  = field.querySelector(".btn-cancel");
+        if (!input) return;
+
+        input.addEventListener("change", (e) => {
+          const file = e.target.files && e.target.files[0];
           if (file && preview) {
             const reader = new FileReader();
-            reader.onload = e => {
-              preview.src = e.target.result;
+            reader.onload = ev => {
+              preview.src = ev.target.result;
               preview.classList.remove("d-none");
             };
             reader.readAsDataURL(file);
@@ -298,7 +313,19 @@
             preview.classList.add("d-none");
           }
         });
-      });
+
+        if (cancel) {
+          cancel.addEventListener("click", () => {
+            input.value = "";
+            if (preview) {
+              preview.src = "";
+              preview.classList.add("d-none");
+            }
+          });
+        }
+      }
+
+      document.querySelectorAll(".image-field").forEach(wireImageField);
     });
   </script>
 

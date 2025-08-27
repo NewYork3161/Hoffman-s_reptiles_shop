@@ -48,6 +48,9 @@
     #section-grid .card-body { padding-top: .75rem; }
     #section-grid strong { display:block; font-size:1.35rem; color:var(--green); margin-bottom:.35rem; }
     #section-grid .muted { display:block; margin:0 auto .25rem; }
+
+    .js-img-preview { margin-top:8px; display:none; align-items:center; gap:10px; }
+    .js-img-preview img { width:180px; height:120px; object-fit:cover; border-radius:8px; border:1px solid #333; }
   </style>
 </head>
 <body>
@@ -86,9 +89,11 @@
                   <div class="text-center mb-3"><img class="thumb" src="<%= s.image %>" alt="Slide <%= i+1 %>"></div>
 
                   <!-- Replace Image -->
-                  <form action="/admin/home/carousel/<%= i %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mb-3">
+                  <form action="/admin/home/carousel/<%= i %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mb-3 image-field">
                     <input type="hidden" name="__edit" value="imageOnly">
-                    <input class="form-control form-control-sm mb-2" type="file" accept="image/*" name="imageFile">
+                    <input class="form-control form-control-sm mb-2 image-input" type="file" accept="image/*" name="imageFile">
+                    <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-cancel">Cancel</button>
+                    <div class="js-img-preview"><img alt="Selected preview"></div>
                     <button class="btn btn-outline-primary btn-sm w-100">Replace Image</button>
                   </form>
 
@@ -120,10 +125,12 @@
 
         <!-- Add slide -->
         <div id="addSlide" class="collapse mt-4">
-          <form class="row g-3" action="/admin/home/carousel?_method=POST" method="POST" enctype="multipart/form-data">
+          <form class="row g-3 image-field" action="/admin/home/carousel?_method=POST" method="POST" enctype="multipart/form-data">
             <div class="col-md-4">
               <label class="form-label">New Slide Image</label>
-              <input class="form-control" type="file" accept="image/*" name="imageFile" required>
+              <input class="form-control image-input" type="file" accept="image/*" name="imageFile" required>
+              <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-cancel">Cancel</button>
+              <div class="js-img-preview"><img alt="Selected preview"></div>
             </div>
             <div class="col-md-4">
               <label class="form-label">Title</label>
@@ -177,8 +184,10 @@
                 <img class="thumb w-100" style="height:220px" src="<%= pageData.split.image %>" alt="split current"/>
               <% } %>
             </div>
-            <form action="/admin/home/split/image?_method=PUT" method="POST" enctype="multipart/form-data">
-              <input class="form-control mb-2" type="file" accept="image/*" name="imageFile"/>
+            <form action="/admin/home/split/image?_method=PUT" method="POST" enctype="multipart/form-data" class="image-field">
+              <input class="form-control mb-2 image-input" type="file" accept="image/*" name="imageFile"/>
+              <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-cancel">Cancel</button>
+              <div class="js-img-preview"><img alt="Selected preview"></div>
               <button class="btn btn-outline-primary">Replace Image</button>
             </form>
           </div>
@@ -260,10 +269,12 @@
         <span class="muted">Replace any thumbnail, add new ones, or delete.</span>
       </div>
       <div class="card-body">
-        <form class="d-flex gap-2 mb-4" action="/admin/home/grid?_method=POST" method="POST" enctype="multipart/form-data">
+        <form class="d-flex gap-2 mb-4 image-field" action="/admin/home/grid?_method=POST" method="POST" enctype="multipart/form-data">
           <div class="flex-grow-1">
             <label class="form-label mb-1">Add Grid Image</label>
-            <input class="form-control" type="file" accept="image/*" name="imageFile">
+            <input class="form-control image-input" type="file" accept="image/*" name="imageFile">
+            <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-cancel">Cancel</button>
+            <div class="js-img-preview"><img alt="Selected preview"></div>
           </div>
           <div class="align-self-end">
             <button class="btn btn-success">+ Add Image</button>
@@ -288,8 +299,10 @@
                     <img class="grid-thumb" src="<%= src %>" alt="grid <%= i+1 %>">
                   </div>
 
-                  <form action="/admin/home/grid/<%= i %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mb-2">
-                    <input class="form-control mb-2" type="file" accept="image/*" name="imageFile">
+                  <form action="/admin/home/grid/<%= i %>?_method=PUT" method="POST" enctype="multipart/form-data" class="mb-2 image-field">
+                    <input class="form-control mb-2 image-input" type="file" accept="image/*" name="imageFile">
+                    <button type="button" class="btn btn-outline-secondary w-100 mb-2 btn-cancel">Cancel</button>
+                    <div class="js-img-preview"><img alt="Selected preview"></div>
                     <button class="btn btn-outline-primary w-100 btn-sm">Replace</button>
                   </form>
 
@@ -333,71 +346,36 @@
     </div>
   </div>
 
-  <!-- Live image preview for all image file inputs -->
+  <!-- JS: live preview + cancel -->
   <script>
     (function () {
-      function ensurePreviewBox(afterNode) {
-        let box = afterNode.nextElementSibling;
-        if (!box || !box.classList || !box.classList.contains('js-img-preview')) {
-          box = document.createElement('div');
-          box.className = 'js-img-preview';
-          box.style.marginTop = '8px';
-          box.style.display = 'inline-flex';
-          box.style.alignItems = 'center';
-          box.style.gap = '10px';
-          box.style.padding = '8px';
-          box.style.border = '1px dashed #444';
-          box.style.borderRadius = '8px';
-          box.style.background = '#0c0c0c';
+      function wireField(input) {
+        const form = input.closest("form");
+        if (!form) return;
+        const previewBox = form.querySelector(".js-img-preview");
+        const img = previewBox ? previewBox.querySelector("img") : null;
+        const cancel = form.querySelector(".btn-cancel");
 
-          const img = document.createElement('img');
-          img.alt = 'Selected preview';
-          img.style.width = '180px';
-          img.style.height = '120px';
-          img.style.objectFit = 'cover';
-          img.style.borderRadius = '8px';
-          img.style.border = '1px solid #333';
+        if (input && img && cancel) {
+          input.addEventListener("change", () => {
+            const file = input.files && input.files[0];
+            if (file) {
+              const url = URL.createObjectURL(file);
+              img.src = url;
+              previewBox.style.display = "inline-flex";
+              img.onload = () => URL.revokeObjectURL(url);
+            }
+          });
 
-          const note = document.createElement('small');
-          note.textContent = 'Preview (not uploaded yet)';
-          note.style.color = '#b8b8b8';
-
-          box.appendChild(img);
-          box.appendChild(note);
-          afterNode.parentNode.insertBefore(box, afterNode.nextSibling);
-        }
-        return box;
-      }
-
-      function showPreviewForInput(input) {
-        const file = input.files && input.files[0];
-        const isImageInput =
-          input.type === 'file' &&
-          (input.getAttribute('accept') || '').toLowerCase().includes('image');
-        if (!isImageInput) return;
-
-        const box = ensurePreviewBox(input);
-        const img = box.querySelector('img');
-
-        if (file) {
-          const url = URL.createObjectURL(file);
-          img.src = url;
-          img.onload = () => URL.revokeObjectURL(url);
-          box.style.display = 'inline-flex';
-        } else {
-          img.removeAttribute('src');
-          box.style.display = 'none';
+          cancel.addEventListener("click", () => {
+            input.value = "";
+            img.src = "";
+            previewBox.style.display = "none";
+          });
         }
       }
 
-      document.addEventListener('change', function (e) {
-        const input = e.target;
-        if (input.matches('input[type="file"][accept*="image"]')) {
-          showPreviewForInput(input);
-        }
-      });
-
-      document.querySelectorAll('input[type="file"][accept*="image"]').forEach(showPreviewForInput);
+      document.querySelectorAll(".image-input").forEach(wireField);
     })();
   </script>
 
