@@ -14,7 +14,7 @@
   <link rel="stylesheet" href="/CSS/home_page.styles.css" />
 
   <style>
-    :root { --green:#0a4e07; --bg:#000; --card:#0b0b0b; }
+    :root { --green:#28a745; --bg:#000; --card:#0b0b0b; }  /* brighter green */
     body { margin:0; background:var(--bg); color:#fff; font-family:Arial, Helvetica, sans-serif; padding-top:76px; }
 
     /* HERO IMAGE: show the whole image (no crop, no border line) */
@@ -41,14 +41,14 @@
     .meta-row { display:flex; gap:12px; justify-content:center; align-items:center; margin-bottom:14px; }
     .price { color:var(--green); font-weight:800; font-size:1.25rem; }
     .availability { padding:6px 12px; border-radius:999px; font-size:.95rem; }
-    .availability.yes { background:rgba(0,128,0,.25); color:#b7ffb7; border:1px solid rgba(0,128,0,.35); }
+    .availability.yes { background:rgba(0,128,0,.25); color:#b7ffb7; border:1px solid rgba(11, 181, 11, 0.35); }
     .availability.no  { background:rgba(128,0,0,.25); color:#ffb7b7; border:1px solid rgba(128,0,0,.35); }
 
     /* Description box: centered, wraps long words, expands height as needed */
     .description {
       max-width: 820px;
       margin: 18px auto 0;
-      color: var(--green);        /* dark green to match title/price */
+      color: var(--green);        /* brighter green */
       background: var(--card);
       border: 1px solid #1b1b1b;
       border-radius: 10px;
