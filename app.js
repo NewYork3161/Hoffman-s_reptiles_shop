@@ -30,13 +30,14 @@ mongoose
     process.exit(1);
   });
 
-/* ---------------- MODELS (optional) ---------------- */
-let AdminHomePage, AdminAnimalsPage, AdminGalleryPage, AdminAboutPage, AdminContactPage;
+/* ---------------- MODELS ---------------- */
+let AdminHomePage, AdminAnimalsPage, AdminGalleryPage, AdminAboutPage, AdminContactPage, AdminAnalyticsPage;
 try { AdminHomePage = require('./models/Admin_Home_Page'); } catch {}
 try { AdminAnimalsPage = require('./models/Admin_Animals_Page'); } catch {}
 try { AdminGalleryPage = require('./models/Admin_Gallery_Page'); } catch {}
 try { AdminAboutPage = require('./models/Admin_About_Page'); } catch {}
 try { AdminContactPage = require('./models/Admin_Contact_Page'); } catch {}
+try { AdminAnalyticsPage = require('./models/Admin_Analytics_Page'); } catch {}
 
 /* ---------------- VIEW ENGINE ---------------- */
 app.set('view engine', 'ejs');
@@ -77,8 +78,7 @@ app.get('/home', async (_req, res) => {
   });
 });
 
-// NOTE: this route is now covered by publicAnimalsRouter too
-// but we can keep it for backward-compatibility
+// NOTE: this route is also covered by publicAnimalsRouter; kept for compatibility
 app.get('/animals', async (_req, res) => {
   const page = AdminAnimalsPage ? await AdminAnimalsPage.findOne({}).lean() : null;
   res.render('animals', {
@@ -142,11 +142,28 @@ app.use('/admin', require('./admin_routes_page'));
 app.use('/admin', require('./admin_gallery_routes_page'));
 app.use('/admin', require('./admin_about_routes_page'));
 
-// ✅ FIXED: Animals routes
+// ✅ Animals routes (admin + public)
 const { adminRouter: animalsAdminRouter, publicAnimalsRouter } =
   require('./admin_animals_routes_page');
 app.use('/admin', animalsAdminRouter);   // Admin editor routes
 app.use(publicAnimalsRouter);            // Public animals grid + detail pages
+
+/* ---------------- ANALYTICS PAGE ---------------- */
+app.get('/admin/analytics', async (_req, res) => {
+  try {
+    const stats = AdminAnalyticsPage ? await AdminAnalyticsPage.findOne({}).lean() : null;
+    const animalsPage = AdminAnimalsPage ? await AdminAnimalsPage.findOne({}).lean() : null;
+
+    res.render('admin_analytics_page', {
+      title: 'Analytics',
+      stats: stats || { totalViews: 0, uniqueVisitors: 0, mostClicked: [] },
+      allAnimals: animalsPage?.animals || []   // 👈 now included
+    });
+  } catch (err) {
+    console.error('❌ Analytics page error:', err);
+    res.status(500).send('Error loading analytics');
+  }
+});
 
 /* ---------------- MISC STATIC ---------------- */
 app.get('/sitemap.xml', (_req, res) => res.sendFile(path.join(__dirname, 'public', 'sitemap.xml')));

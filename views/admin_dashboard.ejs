@@ -73,6 +73,7 @@
           <li><a class="dropdown-item load-page" data-url="/gallery" data-edit="/admin/edit/gallery" href="#">Gallery</a></li>
           <li><a class="dropdown-item load-page" data-url="/about" data-edit="/admin/edit/about" href="#">About</a></li>
           <li><a class="dropdown-item load-page" data-url="/contact" data-edit="/admin/edit/contact" href="#">Contact Us</a></li>
+          <li><a class="dropdown-item load-page" data-url="/admin/analytics" data-edit="" href="#">Analytics</a></li>
           <li><hr class="dropdown-divider"></li>
           <li>
             <form action="/admin/logout" method="POST" style="margin:0;">
@@ -114,8 +115,12 @@
         currentEditUrl = this.getAttribute('data-edit');
         previewFrame.src = url;
 
-        // Show the edit button once a page is loaded
-        editBtnWrapper.style.display = 'block';
+        // Show the edit button once a page is loaded, unless no edit page
+        if (currentEditUrl) {
+          editBtnWrapper.style.display = 'block';
+        } else {
+          editBtnWrapper.style.display = 'none';
+        }
       });
     });
 

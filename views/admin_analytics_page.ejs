@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title><%= title || "Admin Analytics" %></title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"/>
+
+  <style>
+    :root { --green:#28a745; --card:#111; --border:#2a2a2a; --muted:#b8b8b8; }
+    body { background:#000; color:#fff; font-family: Arial, Helvetica, sans-serif; padding:20px; }
+    h1 { color:var(--green); margin-bottom:24px; }
+    .card { background:var(--card); border:1px solid var(--border); color:#fff; border-radius:12px; margin-bottom:24px; }
+    .card-header { background:rgba(0,0,0,.35); border-bottom:1px solid var(--border); }
+    table { color:#fff; }
+    .table-dark th, .table-dark td { background:#111; }
+  </style>
+</head>
+<body>
+  <div class="container-fluid">
+    <h1>Admin Analytics Dashboard</h1>
+
+    <!-- Summary Stats -->
+    <div class="row mb-4">
+      <div class="col-md-6">
+        <div class="card text-center">
+          <div class="card-header">Total Views</div>
+          <div class="card-body"><h2 id="totalViews"><%= stats.totalViews %></h2></div>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="card text-center">
+          <div class="card-header">Tracked Animals</div>
+          <div class="card-body"><h2 id="trackedAnimals"><%= allAnimals.length %></h2></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top Clicked Animals -->
+    <div class="card">
+      <div class="card-header">Animals & Click Counts</div>
+      <div class="card-body">
+        <table class="table table-dark table-striped">
+          <thead>
+            <tr><th>Animal</th><th>Clicks</th></tr>
+          </thead>
+          <tbody id="animalsTable">
+            <% allAnimals.forEach(a => { %>
+              <tr>
+                <td><%= a.name %></td>
+                <td><%= a.clicks %></td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Auto-refresh script -->
+  <script>
+    async function refreshAnalytics() {
+      try {
+        const res = await fetch('/admin/analytics/json');
+        const data = await res.json();
+
+        // update summary numbers
+        document.getElementById('totalViews').textContent = data.stats.totalViews;
+        document.getElementById('trackedAnimals').textContent = data.allAnimals.length;
+
+        // rebuild the table
+        const tbody = document.getElementById('animalsTable');
+        tbody.innerHTML = '';
+        data.allAnimals.forEach(a => {
+          const tr = document.createElement('tr');
+          tr.innerHTML = `<td>${a.name}</td><td>${a.clicks}</td>`;
+          tbody.appendChild(tr);
+        });
+      } catch (err) {
+        console.error('Error refreshing analytics:', err);
+      }
+    }
+
+    // refresh once on page load
+    refreshAnalytics();
+    // refresh every 5 seconds
+    setInterval(refreshAnalytics, 5000);
+  </script>
+</body>
+</html>

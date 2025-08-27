@@ -8,6 +8,7 @@ const fs = require('fs');
 const mongoose = require('mongoose');
 
 const AdminAnimalsPage = require('./models/Admin_Animals_Page');
+const AdminAnalyticsPage = require('./models/Admin_Analytics_Page');
 
 /* ---------------------------------- Utils ---------------------------------- */
 function toBool(v) {
@@ -28,9 +29,30 @@ function slugify(str) {
 async function getOrCreatePage() {
   let doc = await AdminAnimalsPage.findOne({});
   if (!doc) {
-    doc = new AdminAnimalsPage({});
+    doc = new AdminAnimalsPage({ animals: [] });
     await doc.save();
   }
+  if (!Array.isArray(doc.animals)) {
+    doc.animals = [];
+    await doc.save();
+  }
+  return doc;
+}
+async function getOrCreateAnalytics() {
+  let doc = await AdminAnalyticsPage.findOne({});
+  if (!doc) {
+    doc = new AdminAnalyticsPage({
+      totalViews: 0,
+      uniqueVisitors: 0,
+      viewsPerWeek: [],
+      mostClicked: []
+    });
+    await doc.save();
+  }
+  if (!Array.isArray(doc.viewsPerWeek)) doc.viewsPerWeek = [];
+  if (!Array.isArray(doc.mostClicked))  doc.mostClicked  = [];
+  if (typeof doc.totalViews !== 'number')     doc.totalViews = 0;
+  if (typeof doc.uniqueVisitors !== 'number') doc.uniqueVisitors = 0;
   return doc;
 }
 
@@ -38,7 +60,7 @@ async function getOrCreatePage() {
 const uploadDir = path.join(__dirname, 'public', 'uploads');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
 
-const MAX_UPLOAD_MB = 10; // hard limit to prevent huge files
+const MAX_UPLOAD_MB = 10;
 const ALLOWED_MIME = new Set([
   'image/jpeg',
   'image/jpg',
@@ -67,11 +89,6 @@ const upload = multer({
 });
 
 /* ================================ ADMIN API ================================ */
-/* Mount this router at /admin in your app:
-   const { adminRouter, publicAnimalsRouter } = require('./admin_animals_routes_page');
-   app.use('/admin', adminRouter);
-   app.use(publicAnimalsRouter);
-*/
 
 // GET /admin/edit/animals (Editor UI)
 router.get('/edit/animals', async (req, res) => {
@@ -92,7 +109,6 @@ router.get('/edit/animals', async (req, res) => {
 });
 
 /* ---------- HERO ---------- */
-// PUT /admin/animals/hero
 router.put('/animals/hero', upload.single('imageFile'), async (req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -108,7 +124,6 @@ router.put('/animals/hero', upload.single('imageFile'), async (req, res) => {
 });
 
 /* ---------- WELCOME TEXT ---------- */
-// PUT /admin/animals/welcome
 router.put('/animals/welcome', async (req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -122,8 +137,6 @@ router.put('/animals/welcome', async (req, res) => {
 });
 
 /* ---------- GRID: ADD ITEM ---------- */
-// POST /admin/animals/items
-// Accepts: name, price, available, imageFile, description
 router.post('/animals/items', upload.single('imageFile'), async (req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -145,14 +158,12 @@ router.post('/animals/items', upload.single('imageFile'), async (req, res) => {
   }
 });
 
-/* ---------- GRID: UPDATE ITEM (text OR image OR description) ---------- */
-// PUT /admin/animals/items/:id
+/* ---------- GRID: UPDATE ITEM ---------- */
 router.put('/animals/items/:id', upload.single('imageFile'), async (req, res) => {
   try {
     const page = await getOrCreatePage();
     const { id } = req.params;
 
-    // Find by ObjectId if valid, else allow numeric index fallback
     let item = null;
     if (isValidObjectId(id)) {
       item = page.animals.id(id);
@@ -171,7 +182,7 @@ router.put('/animals/items/:id', upload.single('imageFile'), async (req, res) =>
       if (typeof req.body.price !== 'undefined') item.price = (req.body.price || '').trim();
       if (typeof req.body.available !== 'undefined') item.available = toBool(req.body.available);
       if (typeof req.body.description !== 'undefined') item.description = (req.body.description || '').trim();
-      if (req.file) item.image = '/uploads/' + req.file.filename; // allow text + new image in one go
+      if (req.file) item.image = '/uploads/' + req.file.filename;
     }
 
     await page.save();
@@ -183,7 +194,6 @@ router.put('/animals/items/:id', upload.single('imageFile'), async (req, res) =>
 });
 
 /* ---------- GRID: DELETE ITEM ---------- */
-// DELETE /admin/animals/items/:id
 router.delete('/animals/items/:id', async (req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -213,7 +223,6 @@ router.delete('/animals/items/:id', async (req, res) => {
 });
 
 /* ---------- FOOTER ---------- */
-// PUT /admin/animals/footer
 router.put('/animals/footer', async (req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -229,21 +238,78 @@ router.put('/animals/footer', async (req, res) => {
   }
 });
 
-/* ---------- Multer error handler (ADMIN router only) ---------- */
+/* ---------- Multer error handler ---------- */
 router.use((err, _req, res, _next) => {
   if (err && (err.name === 'MulterError' || /image uploads/i.test(err.message))) {
     console.error('❌ Upload error:', err);
     return res.status(400).send(err.message || 'Upload error');
-    }
+  }
   return res.status(500).send('Server error');
 });
 
-/* ================================ PUBLIC API =============================== */
-/* Mount this router at root:
-   app.use(publicAnimalsRouter);
-*/
+/* ================================ ADMIN ANALYTICS ================================ */
 
-// GET /animals  → render grid page
+// GET /admin/analytics (Dashboard)
+router.get('/analytics', async (_req, res) => {
+  try {
+    const page = await getOrCreatePage();
+    const analytics = await getOrCreateAnalytics();
+
+    // clicks map
+    const clicksMap = {};
+    analytics.mostClicked.forEach(m => {
+      clicksMap[m.name] = m.clicks;
+    });
+
+    // merge clicks into animals
+    const animalsWithClicks = page.animals.map(a => ({
+      name: a.name,
+      clicks: clicksMap[a.name] || 0
+    }));
+
+    // render dashboard view
+    res.render('admin_analytics_page', {
+      title: 'Admin Analytics',
+      stats: {
+        totalViews: analytics.totalViews || 0
+      },
+      allAnimals: animalsWithClicks
+    });
+  } catch (err) {
+    console.error('❌ Load analytics error:', err);
+    res.status(500).send('Error loading analytics');
+  }
+});
+
+// JSON API for live dashboard updates
+router.get('/analytics/json', async (_req, res) => {
+  try {
+    const page = await getOrCreatePage();
+    const analytics = await getOrCreateAnalytics();
+
+    const clicksMap = {};
+    analytics.mostClicked.forEach(m => {
+      clicksMap[m.name] = m.clicks;
+    });
+
+    const animalsWithClicks = page.animals.map(a => ({
+      name: a.name,
+      clicks: clicksMap[a.name] || 0
+    }));
+
+    res.json({
+      stats: { totalViews: analytics.totalViews || 0 },
+      allAnimals: animalsWithClicks
+    });
+  } catch (err) {
+    console.error('❌ JSON analytics error:', err);
+    res.status(500).json({ error: 'Error loading analytics' });
+  }
+});
+
+/* ================================ PUBLIC API =============================== */
+
+// GET /animals → grid
 publicAnimalsRouter.get('/animals', async (_req, res) => {
   try {
     const page = await getOrCreatePage();
@@ -255,23 +321,49 @@ publicAnimalsRouter.get('/animals', async (_req, res) => {
   }
 });
 
-// GET /animals/:key  → detail page (key = slugified name OR subdoc _id)
+// GET /animals/:key → detail
 publicAnimalsRouter.get('/animals/:key', async (req, res) => {
   try {
     const { key } = req.params;
     const page = await getOrCreatePage();
-    if (!page) return res.status(404).send('Page not found');
+    const animals = Array.isArray(page.animals) ? page.animals : [];
 
-    // 1) Try by slugified name
-    let animal = page.animals.find(a => slugify(a.name) === key);
-
-    // 2) Fallback by _id (ObjectId or string compare)
+    let animal = animals.find(a => slugify(a.name) === key);
     if (!animal) {
       const valid = isValidObjectId(key);
-      animal = valid ? page.animals.id(key) : page.animals.find(a => String(a._id) === key);
+      animal = valid ? page.animals.id(key) : animals.find(a => String(a._id) === key);
     }
-
     if (!animal) return res.status(404).send('Animal not found');
+
+    // ✅ Analytics update
+    const analytics = await getOrCreateAnalytics();
+    if (!Array.isArray(analytics.mostClicked)) analytics.mostClicked = [];
+    if (!Array.isArray(analytics.viewsPerWeek)) analytics.viewsPerWeek = [];
+
+    analytics.totalViews++;
+
+    // Weekly bucket
+    const now  = new Date();
+    const year = now.getFullYear();
+    const week = Math.ceil((((now - new Date(year, 0, 1)) / 86400000) + new Date(year, 0, 1).getDay() + 1) / 7);
+
+    let weekBucket = analytics.viewsPerWeek.find(w => w.year === year && w.week === week);
+    if (!weekBucket) {
+      weekBucket = { year, week, count: 0 };
+      analytics.viewsPerWeek.push(weekBucket);
+    }
+    weekBucket.count++;
+
+    // Most-clicked animal
+    let mc = analytics.mostClicked.find(m => m.name === animal.name);
+    if (!mc) {
+      mc = { name: animal.name, clicks: 0 };
+      analytics.mostClicked.push(mc);
+    }
+    mc.clicks++;
+
+    await analytics.save();
+
     return res.render('animal_detail', { animal: animal.toObject ? animal.toObject() : animal });
   } catch (err) {
     console.error('❌ Public /animals/:key error:', err);
