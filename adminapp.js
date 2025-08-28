@@ -27,7 +27,6 @@ function absoluteUrl(req, suffixPath) {
 }
 
 function makeMailer() {
-  // Use your Gmail + App Password
   return nodemailer.createTransport({
     service: 'gmail',
     auth: {
@@ -111,7 +110,7 @@ router.post('/register', async (req, res) => {
     }
 
     const token = crypto.randomBytes(32).toString('hex');
-    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24); // 24h
+    const expires = new Date(Date.now() + 1000 * 60 * 60 * 24);
 
     const user = new AdminUser({
       firstName,
@@ -132,22 +131,7 @@ router.post('/register', async (req, res) => {
       from: 'hudsonriver4151@gmail.com',
       to: normalizedEmail,
       subject: 'Confirm your admin account',
-      html: `
-        <div style="font-family:Arial,sans-serif;padding:16px">
-          <h2>Confirm your email</h2>
-          <p>Hi ${firstName || 'there'},</p>
-          <p>Click the button below to confirm your admin account email.</p>
-          <p>
-            <a href="${verifyLink}" style="display:inline-block;padding:12px 18px;background:#0d6efd;color:#fff;text-decoration:none;border-radius:6px">
-              Confirm Email
-            </a>
-          </p>
-          <p>If the button doesn't work, copy and paste this link:</p>
-          <p style="word-break:break-all">${verifyLink}</p>
-          <hr/>
-          <p>This link expires in 24 hours.</p>
-        </div>
-      `,
+      html: `<p>Click the link to confirm: <a href="${verifyLink}">${verifyLink}</a></p>`,
     });
 
     return res.render('AdminCheckEmail', {
@@ -201,7 +185,94 @@ router.get('/forgot-password', (req, res) => {
   });
 });
 
-// ... keep your forgot-password and reset-password routes unchanged ...
+// Handle forgot-password form
+router.post('/forgot-password', async (req, res) => {
+  try {
+    if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20error');
+    const { email } = req.body;
+    const user = await AdminUser.findOne({ email: (email || '').trim().toLowerCase() });
+    if (!user) return res.redirect('/admin/update-login?msg=Email%20not%20found');
+
+    const token = crypto.randomBytes(32).toString('hex');
+    user.resetToken = token;
+    user.resetTokenExpiresAt = new Date(Date.now() + 1000 * 60 * 15);
+    await user.save();
+
+    const link = absoluteUrl(req, `/admin/reset-password?token=${token}`);
+    const transporter = makeMailer();
+    await transporter.sendMail({
+      from: 'hudsonriver4151@gmail.com',
+      to: user.email,
+      subject: 'Reset your admin password',
+      html: `<p>Click to reset: <a href="${link}">${link}</a></p>`,
+    });
+
+    return res.redirect('/admin/update-login?msg=Password%20reset%20link%20sent');
+  } catch (err) {
+    console.error('FORGOT PASSWORD ERROR:', err);
+    return res.redirect('/admin/update-login?msg=Error');
+  }
+});
+
+// Reset password form
+router.get('/reset-password', (req, res) => {
+  res.render('AdminResetPassword', {
+    title: 'Reset Password',
+    token: req.query.token,
+    msg: req.query.msg || null,
+  });
+});
+
+// Reset password submit
+router.post('/reset-password', async (req, res) => {
+  try {
+    const { token, password, confirm } = req.body;
+    if (!token) return res.redirect('/admin/update-login?msg=Missing%20token');
+
+    const user = await AdminUser.findOne({
+      resetToken: token,
+      resetTokenExpiresAt: { $gt: new Date() },
+    });
+    if (!user) return res.redirect('/admin/update-login?msg=Invalid%20or%20expired%20token');
+
+    if (password !== confirm) {
+      return res.redirect(`/admin/reset-password?token=${token}&msg=Passwords%20do%20not%20match`);
+    }
+
+    user.password = password;
+    user.resetToken = undefined;
+    user.resetTokenExpiresAt = undefined;
+    await user.save();
+
+    return res.redirect('/admin/login?msg=Password%20updated');
+  } catch (err) {
+    console.error('RESET PASSWORD ERROR:', err);
+    return res.redirect('/admin/update-login?msg=Error');
+  }
+});
+
+/* ---------------- FORGOT EMAIL ---------------- */
+router.post('/forgot-email', async (req, res) => {
+  try {
+    if (!AdminUser) return res.redirect('/admin/update-login?msg=Server%20error');
+    const { phone } = req.body;
+    const user = await AdminUser.findOne({ phone: (phone || '').trim() });
+    if (!user) return res.redirect('/admin/update-login?msg=Phone%20not%20found');
+
+    const transporter = makeMailer();
+    await transporter.sendMail({
+      from: 'hudsonriver4151@gmail.com',
+      to: user.email,
+      subject: 'Your Admin Account Email',
+      text: `Hi ${user.firstName}, your registered admin email is: ${user.email}`,
+    });
+
+    return res.redirect('/admin/update-login?msg=Your%20email%20was%20sent%20to%20your%20inbox');
+  } catch (err) {
+    console.error('FORGOT EMAIL ERROR:', err);
+    return res.redirect('/admin/update-login?msg=Error');
+  }
+});
 
 /* ---------------- DELETE ACCOUNT ---------------- */
 router.get('/delete-account', (req, res) => {
@@ -210,8 +281,6 @@ router.get('/delete-account', (req, res) => {
     msg: req.query.msg || null,
   });
 });
-
-// ... keep your delete-account POST route unchanged ...
 
 /* ---------------- OTHER ROUTES ---------------- */
 router.get('/update-login', (req, res) => {
@@ -228,7 +297,6 @@ router.get('/dashboard', requireAdmin, (req, res) => {
   });
 });
 
-// ✅ NEW: Review Emails page
 router.get('/review_emails', requireAdmin, (req, res) => {
   res.render('admin_review_emails', {
     title: 'Review Emails',
